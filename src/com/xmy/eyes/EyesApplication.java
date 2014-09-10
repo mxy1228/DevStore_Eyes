@@ -22,7 +22,7 @@ public class EyesApplication extends Application {
 		super.onCreate();
 		mGeofenceClient = new GeofenceClient(getApplicationContext());
 		SDKInitializer.initialize(getApplicationContext());
-		mTencent = Tencent.createInstance("", getApplicationContext());
+		mTencent = Tencent.createInstance("1102488799", getApplicationContext());
 		mMiClient = GalaxyOAuthClient.createInstance(Contants.MI_APP_ID);
 	}
 }

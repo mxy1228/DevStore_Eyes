@@ -17,4 +17,7 @@ public class Contants {
 	public static final String BIND = "bind";
 	//小米结构化存储：表名：EyesUser
 	public static final String TABLE_NAME = "EyesUser";
+	
+	//QQ APPID
+	public static final String QQ_APPID = "1102488799";
 }

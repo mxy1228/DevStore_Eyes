@@ -16,11 +16,7 @@
         <activity
             android:name="com.xmy.eyes.view.MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
         
         
@@ -42,7 +38,7 @@
 		            <action android:name="android.intent.action.VIEW" />
 					<category android:name="android.intent.category.DEFAULT" />
 		            <category android:name="android.intent.category.BROWSABLE" />
-		            <data android:scheme="" />
+		            <data android:scheme="1102488799" />
 		     </intent-filter>
 		</activity>
         <!-- QQ登录所需 -->
@@ -50,6 +46,13 @@
         <meta-data 
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="0oXr4hSFGabCpcq6I2DGLZL9"/>
+        <activity android:name=".view.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />  
