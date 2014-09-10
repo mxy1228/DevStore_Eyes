@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DevStore_Eyes</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="ok">确定</string>
+	<string name="cancel">取消</string>
+	<string name="radius_title">请设置围栏半径(0~300米)</string>
+</resources>

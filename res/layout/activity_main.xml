@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.xmy.eyes.view.MainActivity" >
+
+    <com.baidu.mapapi.map.MapView  
+	    android:id="@+id/main_map_view"  
+	    android:layout_width="fill_parent"  
+	    android:layout_height="fill_parent"  
+	    android:clickable="true" />
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="50.0dip"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/padding"
+        android:padding="@dimen/padding"
+        android:gravity="center_vertical"
+        android:background="#66464646">
+        
+        <EditText 
+            android:id="@+id/main_et"
+            android:layout_width="0.0dip"
+            android:layout_weight="1.0"
+            android:layout_height="match_parent"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"/>
+        
+        
+        <ImageButton 
+            android:id="@+id/main_search_ibtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_btn_xbg"
+            android:background="@null"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+    </LinearLayout>
+    
+</RelativeLayout>
