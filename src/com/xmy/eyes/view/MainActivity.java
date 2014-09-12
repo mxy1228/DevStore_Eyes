@@ -28,6 +28,7 @@ import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionResult.SuggestionInfo;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.R;
+import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 
@@ -40,6 +41,7 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 	private IMainPresenter mPresenter;
 	private BaiduMap mMap;
 	private String mCurrentCity;
+	private MyUser mMyUser;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,8 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 	@Override
 	protected void initData() {
 		this.mMap = mMapView.getMap();
-		this.mPresenter = new IMainPresenter(this);
+		this.mMyUser = (MyUser)getIntent().getSerializableExtra("user");
+		this.mPresenter = new IMainPresenter(this,mMyUser);
 		//发起百度定位
 		this.mPresenter.requstLocate(this);
 	}

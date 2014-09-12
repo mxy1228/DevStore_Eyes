@@ -1,12 +1,16 @@
 package com.xmy.eyes.bean;
 
+import java.io.Serializable;
+
 import cn.bmob.v3.BmobObject;
 
-public class MyUser extends BmobObject {
+public class MyUser extends BmobObject implements Serializable{
 
 	private String uid;
 	private String bind;
 	private String username;
+	private String installationId;
+	private String bindInstallationId;
 	
 	public String getUid() {
 		return uid;
@@ -25,6 +29,18 @@ public class MyUser extends BmobObject {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public String getInstallationId() {
+		return installationId;
+	}
+	public void setInstallationId(String installationId) {
+		this.installationId = installationId;
+	}
+	public String getBindInstallationId() {
+		return bindInstallationId;
+	}
+	public void setBindInstallationId(String bindInstallationId) {
+		this.bindInstallationId = bindInstallationId;
 	}
 	
 }

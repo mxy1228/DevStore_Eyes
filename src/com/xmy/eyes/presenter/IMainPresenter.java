@@ -2,20 +2,21 @@ package com.xmy.eyes.presenter;
 
 import android.content.Context;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobInstallation;
+import cn.bmob.v3.BmobPushManager;
+import cn.bmob.v3.BmobQuery;
+
 import com.baidu.location.BDGeofence;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.BDLocationStatusCodes;
+import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;
+import com.baidu.location.GeofenceClient.OnGeofenceTriggerListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;
 import com.baidu.location.LocationClientOption.LocationMode;
 import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeOption;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
@@ -24,20 +25,22 @@ import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
-import com.baidu.mapapi.search.sug.SuggestionResult.SuggestionInfo;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.xmy.eyes.Contants;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
+import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.impl.IMainHandler;
 
-public class IMainPresenter implements OnAddBDGeofencesResultListener{
+public class IMainPresenter implements OnAddBDGeofencesResultListener,OnGeofenceTriggerListener{
 
 	private IMainHandler mHandler;
+	private MyUser mMyUser;
 	
-	public IMainPresenter(IMainHandler handler){
+	public IMainPresenter(IMainHandler handler,MyUser user){
 		this.mHandler = handler;
+		this.mMyUser = user;
 	}
 	
 	/**
@@ -63,8 +66,12 @@ public class IMainPresenter implements OnAddBDGeofencesResultListener{
 	@Override
 	public void onAddBDGeofencesResult(int arg0, String arg1) {
 		if(arg0 == BDLocationStatusCodes.SUCCESS){
-			//围栏创建成功
-			mHandler.onSuccessAddBDGeofences();
+			//围栏创建成功后给对方推送消息，让对方开启电子围栏
+			
+			
+//			EyesApplication.mGeofenceClient.registerGeofenceTriggerListener(this);
+//			EyesApplication.mGeofenceClient.start();
+//			mHandler.onSuccessAddBDGeofences();
 		}
 	}
 	
@@ -162,30 +169,23 @@ public class IMainPresenter implements OnAddBDGeofencesResultListener{
 		});
 		search.searchPoiDetail(new PoiDetailSearchOption().poiUid(uid));
 	}
+
+	@Override
+	public void onGeofenceExit(String arg0) {
+		//退出围栏，发送推送消息给绑定账号
+		BmobQuery<BmobInstallation> query = BmobInstallation.getQuery();
+		query.addWhereEqualTo("installationId", mMyUser.getBindInstallationId());
+		EyesApplication.mBmobPushManager.setQuery(query);
+		EyesApplication.mBmobPushManager.pushMessage(mMyUser.getBind()+"离开围栏");
+	}
+
+	@Override
+	public void onGeofenceTrigger(String arg0) {
+		//进入围栏，发送推送消息给绑定账号
+		BmobQuery<BmobInstallation> query = BmobInstallation.getQuery();
+		query.addWhereEqualTo("installationId", mMyUser.getBindInstallationId());
+		EyesApplication.mBmobPushManager.setQuery(query);
+		EyesApplication.mBmobPushManager.pushMessage(mMyUser.getBind()+"进入围栏");
+	}
 	
-	/**
-	 * 根据百度给出的搜索建议地址转换为地理编码
-	 * @param info
-	 */
-//	public void getGeoCode(SuggestionInfo info){
-//		GeoCoder coder = GeoCoder.newInstance();
-//		coder.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
-//			
-//			@Override
-//			public void onGetReverseGeoCodeResult(ReverseGeoCodeResult arg0) {
-//				
-//				//获取反响地理编码结果
-//			}
-//			
-//			@Override
-//			public void onGetGeoCodeResult(GeoCodeResult arg0) {
-//				//获取地址编码结果
-//				if(arg0 == null || arg0.error != SearchResult.ERRORNO.NO_ERROR){
-//					//没有检测到结果
-//				}
-//				mHandler.onGetGeoCode(arg0);
-//			}
-//		});
-//		coder.geocode(new GeoCodeOption().city(info.city).address(info.district+info.key));
-//	}
 }

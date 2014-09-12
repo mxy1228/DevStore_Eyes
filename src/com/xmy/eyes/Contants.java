@@ -26,4 +26,6 @@ public class Contants {
 	public static final String BAIDU_APPID = "Al8y2B0qikgt6viHQXAYbgZp";
 	//连接请求超时时间
 	public static int TIME_OUT = 20 * 1000;
+	//百度API Key
+	public static final String BAIDU_API_KEY = "Al8y2B0qikgt6viHQXAYbgZp";
 }

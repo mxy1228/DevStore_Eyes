@@ -7,6 +7,7 @@ import org.codehaus.jackson.type.TypeReference;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import cn.bmob.v3.BmobInstallation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -152,8 +153,6 @@ public class ILoginPresenter {
 						
 						@Override
 						public void onSuccess(BaiduUserInfo t) {
-							//成功获取百度用户信息后，将用户昵称存储到SP中，以作为是否已经登录过的标志
-							SPUtil.setUserName(t.getUsername());
 							//然后将查询用户是否已经在Bmob上注册
 							registOnBmob(atv, t);
 						}
@@ -186,8 +185,9 @@ public class ILoginPresenter {
 		}
 	}
 	
+	
 	/**
-	 * 根据QQOpenID在Bmob上查询是否已经注册，若没注册则进行注册
+	 * 根据百度用户名在Bmob上查询是否已经注册，若没注册则进行注册
 	 * @param ctx
 	 * @param bean
 	 */
@@ -210,6 +210,7 @@ public class ILoginPresenter {
 					final MyUser user = new MyUser();
 					user.setUid(info.getUserid());
 					user.setUsername(info.getUsername());
+					user.setInstallationId(BmobInstallation.getInstallationId(ctx));
 					user.save(ctx, new SaveListener() {
 						
 						@Override

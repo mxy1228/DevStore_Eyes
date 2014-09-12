@@ -53,14 +53,16 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 	 */
 	@Override
 	public void onSuccessRegistOnBmob(MyUser user) {
+		Intent intent = new Intent();
+		intent.putExtra("user", user);
 		if(user.getBind() != null){
 			//已经成功绑定
-			
+			intent.setClass(LoginActivity.this,MainActivity.class);
 		}else{
 			//还未绑定
-			Intent intent = new Intent(LoginActivity.this,BindActivity.class);
-			startActivity(intent);
+			intent.setClass(LoginActivity.this,BindActivity.class);
 		}
+		startActivity(intent);
 	}
 
 	/**
