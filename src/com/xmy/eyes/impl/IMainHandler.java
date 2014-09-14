@@ -1,6 +1,5 @@
 package com.xmy.eyes.impl;
 
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
@@ -37,5 +36,8 @@ public interface IMainHandler {
 	 * @param result
 	 */
 	public void onPOISeach(PoiResult result);
+	
+	public void onGeofenceExit();
+	public void onGeofenceIn();
 	
 }

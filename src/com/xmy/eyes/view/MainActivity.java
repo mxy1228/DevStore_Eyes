@@ -1,6 +1,9 @@
 package com.xmy.eyes.view;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,10 +13,16 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import cn.bmob.v3.BmobInstallation;
+import cn.bmob.v3.BmobPushManager;
+import cn.bmob.v3.BmobQuery;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.CircleOptions;
@@ -27,21 +36,24 @@ import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionResult.SuggestionInfo;
 import com.xmy.eyes.ELog;
+import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.R;
-import com.xmy.eyes.bean.MyUser;
+import com.xmy.eyes.bean.SetGeofenceResultBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
+
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity implements IMainHandler,OnClickListener,OnEditorActionListener{
 
 	private MapView mMapView;
 	private EditText mET;
 	private ImageButton mSearchIBtn;
+	private Button mTestBtn;
 	
 	private IMainPresenter mPresenter;
 	private BaiduMap mMap;
 	private String mCurrentCity;
-	private MyUser mMyUser;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,21 +76,23 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 		this.mMapView = (MapView)findViewById(R.id.main_map_view);
 		this.mET = (EditText)findViewById(R.id.main_et);
 		this.mSearchIBtn = (ImageButton)findViewById(R.id.main_search_ibtn);
+		this.mTestBtn = (Button)findViewById(R.id.testBtn);
 	}
 
 	@Override
 	protected void initData() {
 		this.mMap = mMapView.getMap();
-		this.mMyUser = (MyUser)getIntent().getSerializableExtra("user");
-		this.mPresenter = new IMainPresenter(this,mMyUser);
+		this.mPresenter = new IMainPresenter(this);
 		//发起百度定位
 		this.mPresenter.requstLocate(this);
+		EventBus.getDefault().register(this);
 	}
 
 	@Override
 	protected void initEvent() {
 		this.mSearchIBtn.setOnClickListener(this);
 		this.mET.setOnEditorActionListener(this);
+		this.mTestBtn.setOnClickListener(this);
 	}
 	
 	@Override
@@ -122,7 +136,12 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 		case R.id.main_search_ibtn:
 			poiSearch();
 			break;
-
+		case R.id.testBtn:
+			BmobQuery<BmobInstallation> query = new BmobQuery<BmobInstallation>();
+			query.addWhereEqualTo("uid", EyesApplication.mMyUser.getBindedUID());
+			EyesApplication.mBmobPushManager.setQuery(query);
+			EyesApplication.mBmobPushManager.pushMessage("点对点测试");
+			break;
 		default:
 			break;
 		}
@@ -245,6 +264,39 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 			break;
 		}
 		return true;
+	}
+
+	@Override
+	public void onGeofenceExit() {
+		NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notif = new Notification(R.drawable.search_btn, "离开围栏", 0);
+		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notifacation_view);
+		view.setTextViewText(R.id.notification_view_tv, "离开围栏");
+		notif.contentView = view;
+		notif.flags = Notification.FLAG_NO_CLEAR;
+		manager.notify(1, notif);
+	}
+
+	@Override
+	public void onGeofenceIn() {
+		NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notif = new Notification(R.drawable.search_btn, "进入围栏", 0);
+		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notifacation_view);
+		view.setTextViewText(R.id.notification_view_tv, "进入围栏");
+		notif.contentView = view;
+		notif.flags = Notification.FLAG_NO_CLEAR;
+		manager.notify(1, notif);
+	}
+	
+	/**
+	 * 给对方设置电子围栏的结果
+	 * @param bean
+	 */
+	public void onEventMainThread(SetGeofenceResultBean bean){
+		dissmisWaitingDialog();
+		if(bean.isResult()){
+			Toast.makeText(MainActivity.this, "给对方设置电子围栏成功", Toast.LENGTH_LONG).show();
+		}
 	}
 }
 

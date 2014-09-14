@@ -7,6 +7,7 @@ import org.codehaus.jackson.type.TypeReference;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import cn.bmob.push.BmobPush;
 import cn.bmob.v3.BmobInstallation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
@@ -21,6 +22,7 @@ import com.xmy.eyes.Contants;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.bean.BaiduUserInfo;
+import com.xmy.eyes.bean.MyBmobInstallation;
 import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.bean.QQLoginResultBean;
 import com.xmy.eyes.http.MyHttpRequest;
@@ -28,6 +30,7 @@ import com.xmy.eyes.http.MyHttpRequest.RequestHandler;
 import com.xmy.eyes.impl.ILoginHandler;
 import com.xmy.eyes.util.JSONUtil;
 import com.xmy.eyes.util.SPUtil;
+import com.xmy.eyes.view.LoginActivity;
 
 public class ILoginPresenter {
 
@@ -96,36 +99,36 @@ public class ILoginPresenter {
 	/*
 	 * QQ登录
 	 */
-	public void tencentLogin(final Activity act){
-		EyesApplication.mTencent.login(act, "get_simple_userinfo", new IUiListener() {
-			
-			@Override
-			public void onError(UiError arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onComplete(Object arg0) {
-				ELog.d("QQ login result = "+arg0.toString());
-				try {
-					QQLoginResultBean bean = JSONUtil.getMapper().readValue(arg0.toString(), new TypeReference<QQLoginResultBean>() {
-					});
-					if(bean != null){
-//						registOnBmob(act, bean);
-					}
-				} catch (Exception e) {
-					ELog.e(e);
-				}
-			}
-			
-			@Override
-			public void onCancel() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-	}
+//	public void tencentLogin(final Activity act){
+//		EyesApplication.mTencent.login(act, "get_simple_userinfo", new IUiListener() {
+//			
+//			@Override
+//			public void onError(UiError arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onComplete(Object arg0) {
+//				ELog.d("QQ login result = "+arg0.toString());
+//				try {
+//					QQLoginResultBean bean = JSONUtil.getMapper().readValue(arg0.toString(), new TypeReference<QQLoginResultBean>() {
+//					});
+//					if(bean != null){
+////						registOnBmob(act, bean);
+//					}
+//				} catch (Exception e) {
+//					ELog.e(e);
+//				}
+//			}
+//			
+//			@Override
+//			public void onCancel() {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//	}
 	
 	/**
 	 * 百度登陆
@@ -210,13 +213,12 @@ public class ILoginPresenter {
 					final MyUser user = new MyUser();
 					user.setUid(info.getUserid());
 					user.setUsername(info.getUsername());
-					user.setInstallationId(BmobInstallation.getInstallationId(ctx));
 					user.save(ctx, new SaveListener() {
 						
 						@Override
 						public void onSuccess() {
-							ELog.d("first regist uid = "+user.getUid()+" success");
-							mHandler.onSuccessRegistOnBmob(user);
+							//注册用户信息成功后再保存推送信息
+							registPushInfoOnBmob(ctx, user);
 						}
 						
 						@Override
@@ -235,5 +237,26 @@ public class ILoginPresenter {
 		
 	}
 	
-	
+	/**
+	 * 在Bmob上注册推送信息，该信息会保存在Bmob后台的Installation表中
+	 */
+	private void registPushInfoOnBmob(final Context ctx,final MyUser myUser){
+		ELog.d("first regist uid = "+myUser.getUsername()+" success");
+		MyBmobInstallation installation = new MyBmobInstallation(ctx);
+		installation.setUid(myUser.getUid());
+		installation.setUsername(myUser.getUsername());
+		installation.save(ctx, new SaveListener() {
+			
+			@Override
+			public void onSuccess() {
+				ELog.d("registPushInfoOnBmob:onSuccess");
+				mHandler.onSuccessRegistOnBmob(myUser);
+			}
+			
+			@Override
+			public void onFailure(int arg0, String arg1) {
+				ELog.e("registPushInfoOnBmob:onFailure:"+arg0+":"+arg1);
+			}
+		});
+	}
 }

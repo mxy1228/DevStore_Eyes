@@ -3,6 +3,11 @@ package com.xmy.eyes.view;
 import android.content.Intent;
 import android.os.Bundle;
 
+import cn.bmob.push.BmobPush;
+
+import com.xmy.eyes.Contants;
+import com.xmy.eyes.EyesApplication;
+import com.xmy.eyes.bean.MyBmobInstallation;
 import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.bean.QQLoginResultBean;
 import com.xmy.eyes.impl.ILoginHandler;
@@ -53,6 +58,7 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 	 */
 	@Override
 	public void onSuccessRegistOnBmob(MyUser user) {
+		EyesApplication.mMyUser = user;
 		Intent intent = new Intent();
 		intent.putExtra("user", user);
 		if(user.getBind() != null){

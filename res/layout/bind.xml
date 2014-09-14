@@ -9,8 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:imeOptions="actionSearch"
+        android:visibility="gone"
         android:hint="@string/search_hint"
         android:singleLine="true"/>
 
+    <Button 
+        android:id="@+id/bind_wait_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/waite_for_geofence"/>
+    
+    <Button
+        android:id="@+id/bind_set_geofence_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_geofence"/>
+    
+    <TextView
+        android:id="@+id/bind_wait_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/waiting"/>
     
 </LinearLayout>

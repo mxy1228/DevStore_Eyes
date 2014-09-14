@@ -2,15 +2,25 @@ package com.xmy.eyes.presenter;
 
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONObject;
+
 import android.content.Context;
+import android.os.Binder;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 import com.xmy.eyes.Contants;
 import com.xmy.eyes.ELog;
+import com.xmy.eyes.EyesApplication;
+import com.xmy.eyes.PushMessageContants;
+import com.xmy.eyes.R;
 import com.xmy.eyes.bean.MyUser;
+import com.xmy.eyes.bean.ReqBindJsonBean;
+import com.xmy.eyes.bean.ReqBindResultJsonBean;
 import com.xmy.eyes.impl.IBindHandler;
+import com.xmy.eyes.util.JSONUtil;
 import com.xmy.eyes.util.SPUtil;
 
 public class IBindPresenter {
@@ -49,34 +59,41 @@ public class IBindPresenter {
 	}
 	
 	/**
-	 * 和指定的用户名进行绑定
+	 * 请求绑定
 	 * @param my
 	 * @param toBindUserName
 	 */
-	public void bind(final Context ctx,final MyUser my,final MyUser bindedUser){
-		my.setBind(bindedUser.getUsername());
-		my.setBindInstallationId(bindedUser.getInstallationId());
-		my.update(ctx, new UpdateListener() {
+	public void requestBind(final Context ctx,final MyUser bindedUser){
+		//发送推送消息询问对方绑定
+		try {
+			ReqBindJsonBean bean = new ReqBindJsonBean();
+			bean.setType(PushMessageContants.MSG_TYPE_REQUEST_BIND);
+			bean.setMsg(ctx.getString(R.string.req_bind_msg, EyesApplication.mMyUser.getUsername()));
+			bean.setReqUid(EyesApplication.mMyUser.getUid());
+			bean.setReqUserName(EyesApplication.mMyUser.getUsername());
+			String jsonStr = new ObjectMapper().writeValueAsString(bean);
+			JSONObject obj = new JSONObject(jsonStr);
+			BmobPushMsgPresenter.getDefault().sendMessage(obj,bindedUser.getUid());
+		} catch (Exception e) {
+			ELog.e(e);
+		}
+		
+	}
+	
+	/**
+	 * 和指定的用户名进行绑定
+	 */
+	public void bind(String taUserName,String taUid,Context ctx){
+		EyesApplication.mMyUser.setBind(taUserName);
+		EyesApplication.mMyUser.setBindedUID(taUid);
+		EyesApplication.mMyUser.update(ctx, new UpdateListener() {
 			
 			@Override
 			public void onSuccess() {
 				ELog.d("bind success");
-				bindedUser.setBind(my.getUsername());
-				bindedUser.setBindInstallationId(my.getInstallationId());
-				bindedUser.update(ctx, new UpdateListener() {
-					
-					@Override
-					public void onSuccess() {
-						mHandler.onBind(true);
-						//成功后，将用户昵称存储到SP中，以作为是否已经登录过的标志
-						SPUtil.setUserName(my.getUsername());
-					}
-					
-					@Override
-					public void onFailure(int arg0, String arg1) {
-						mHandler.onBind(false);
-					}
-				});
+				mHandler.onBind(true);
+				//成功后，将用户昵称存储到SP中，以作为是否已经登录过的标志
+				SPUtil.setUserName(EyesApplication.mMyUser.getUsername());
 			}
 			
 			@Override
@@ -85,7 +102,5 @@ public class IBindPresenter {
 				mHandler.onBind(false);
 			}
 		});
-		
-		
 	}
 }

@@ -1,10 +1,9 @@
 package com.xmy.eyes.presenter;
 
-import android.content.Context;
+import org.json.JSONObject;
 
-import cn.bmob.v3.Bmob;
+import android.content.Context;
 import cn.bmob.v3.BmobInstallation;
-import cn.bmob.v3.BmobPushManager;
 import cn.bmob.v3.BmobQuery;
 
 import com.baidu.location.BDGeofence;
@@ -30,17 +29,18 @@ import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.xmy.eyes.Contants;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
-import com.xmy.eyes.bean.MyUser;
+import com.xmy.eyes.PushMessageContants;
 import com.xmy.eyes.impl.IMainHandler;
 
 public class IMainPresenter implements OnAddBDGeofencesResultListener,OnGeofenceTriggerListener{
 
 	private IMainHandler mHandler;
-	private MyUser mMyUser;
+	private int mRadius;//电子围栏的半径
+	private double mX;
+	private double mY;
 	
-	public IMainPresenter(IMainHandler handler,MyUser user){
+	public IMainPresenter(IMainHandler handler){
 		this.mHandler = handler;
-		this.mMyUser = user;
 	}
 	
 	/**
@@ -51,6 +51,23 @@ public class IMainPresenter implements OnAddBDGeofencesResultListener,OnGeofence
 	 * @param radius
 	 */
 	public void setDBGeofence(double x,double y,int radius){
+		this.mX = x;
+		this.mY = y;
+		this.mRadius = radius;
+		try {
+			//让对方开启电子围栏
+			JSONObject obj = new JSONObject();
+			obj.put(PushMessageContants.TYPE, PushMessageContants.MSG_TYPE_SET_GEOFENCE);
+			obj.put(PushMessageContants.X, mX);
+			obj.put(PushMessageContants.Y, mY);
+			obj.put(PushMessageContants.RADIUS, mRadius);
+			BmobPushMsgPresenter.getDefault().sendMessage(obj,EyesApplication.mMyUser.getBindedUID());
+		} catch (Exception e) {
+			ELog.e(e);
+		}
+	}
+	
+	public void setAndStartBDGeofence(double x,double y,int radius){
 		BDGeofence fence = new BDGeofence.Builder()
 		.setGeofenceId(Contants.GEOFENCE_ID)//设置电子围栏的ID
 		.setCircularRegion(x, y,radius)//设置围栏x,y经纬度及半径
@@ -66,12 +83,18 @@ public class IMainPresenter implements OnAddBDGeofencesResultListener,OnGeofence
 	@Override
 	public void onAddBDGeofencesResult(int arg0, String arg1) {
 		if(arg0 == BDLocationStatusCodes.SUCCESS){
-			//围栏创建成功后给对方推送消息，让对方开启电子围栏
-			
-			
-//			EyesApplication.mGeofenceClient.registerGeofenceTriggerListener(this);
-//			EyesApplication.mGeofenceClient.start();
-//			mHandler.onSuccessAddBDGeofences();
+			//围栏创建成功后开启围栏并给对方推送消息，告知设置成功
+			EyesApplication.mGeofenceClient.registerGeofenceTriggerListener(this);
+			EyesApplication.mGeofenceClient.start();
+			mHandler.onSuccessAddBDGeofences();
+			try {
+				JSONObject obj = new JSONObject();
+				obj.put(PushMessageContants.TYPE, PushMessageContants.MSG_TYPE_GEOFENCE_RESULT);
+				obj.put(PushMessageContants.RESULT, true);
+				BmobPushMsgPresenter.getDefault().sendMessage(obj,EyesApplication.mMyUser.getBindedUID());
+			} catch (Exception e) {
+				ELog.e(e);
+			}
 		}
 	}
 	
@@ -173,19 +196,27 @@ public class IMainPresenter implements OnAddBDGeofencesResultListener,OnGeofence
 	@Override
 	public void onGeofenceExit(String arg0) {
 		//退出围栏，发送推送消息给绑定账号
-		BmobQuery<BmobInstallation> query = BmobInstallation.getQuery();
-		query.addWhereEqualTo("installationId", mMyUser.getBindInstallationId());
-		EyesApplication.mBmobPushManager.setQuery(query);
-		EyesApplication.mBmobPushManager.pushMessage(mMyUser.getBind()+"离开围栏");
+		try {
+			JSONObject obj = new JSONObject();
+			obj.put(PushMessageContants.MSG_TYPE_GEOFENCE+"", EyesApplication.mMyUser.getBind()+"离开围栏");
+			BmobPushMsgPresenter.getDefault().sendMessage(obj,EyesApplication.mMyUser.getBindedUID());
+			mHandler.onGeofenceExit();
+		} catch (Exception e) {
+			ELog.e(e);
+		}
 	}
 
 	@Override
 	public void onGeofenceTrigger(String arg0) {
 		//进入围栏，发送推送消息给绑定账号
-		BmobQuery<BmobInstallation> query = BmobInstallation.getQuery();
-		query.addWhereEqualTo("installationId", mMyUser.getBindInstallationId());
-		EyesApplication.mBmobPushManager.setQuery(query);
-		EyesApplication.mBmobPushManager.pushMessage(mMyUser.getBind()+"进入围栏");
+		try {
+			JSONObject obj = new JSONObject();
+			obj.put(PushMessageContants.MSG_TYPE_GEOFENCE+"", EyesApplication.mMyUser.getBind()+"进入围栏");
+			BmobPushMsgPresenter.getDefault().sendMessage(obj,EyesApplication.mMyUser.getBindedUID());
+			mHandler.onGeofenceIn();
+		} catch (Exception e) {
+			ELog.e(e);
+		}
 	}
 	
 }
