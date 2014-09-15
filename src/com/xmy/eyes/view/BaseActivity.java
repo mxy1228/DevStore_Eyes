@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.xmy.eyes.Config;
 import com.xmy.eyes.widget.WaitingDialog;
 
 public abstract class BaseActivity extends FragmentActivity {
@@ -36,6 +37,18 @@ public abstract class BaseActivity extends FragmentActivity {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
 	}
 	
+	protected void showDebugToast(String content){
+		if(Config.DEBUG){
+			Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	protected void showDebugToast(int res){
+		if(Config.DEBUG){
+			Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
+		}
+	}
+	
 	protected void showWaitingDialog(){
 		this.mWaitingDialog.show();
 	}
@@ -43,4 +56,5 @@ public abstract class BaseActivity extends FragmentActivity {
 	protected void dissmisWaitingDialog(){
 		this.mWaitingDialog.dismiss();
 	}
+	
 }

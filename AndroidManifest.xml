@@ -80,6 +80,7 @@
                 <action android:name="cn.bmob.push.action.MESSAGE"/>
             </intent-filter>
         </receiver>
+        <activity android:name=".view.TestActivity"></activity>
         
     </application>
 

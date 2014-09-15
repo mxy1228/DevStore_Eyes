@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,10 +19,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RemoteViews;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import cn.bmob.v3.BmobInstallation;
-import cn.bmob.v3.BmobPushManager;
 import cn.bmob.v3.BmobQuery;
 
 import com.baidu.mapapi.map.BaiduMap;
@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 		this.mMap = mMapView.getMap();
 		this.mPresenter = new IMainPresenter(this);
 		//发起百度定位
-		this.mPresenter.requstLocate(this);
+		this.mPresenter.requstLocate(false);
 		EventBus.getDefault().register(this);
 	}
 
@@ -141,6 +141,8 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 			query.addWhereEqualTo("uid", EyesApplication.mMyUser.getBindedUID());
 			EyesApplication.mBmobPushManager.setQuery(query);
 			EyesApplication.mBmobPushManager.pushMessage("点对点测试");
+			Intent intent = new Intent(MainActivity.this,TestActivity.class);
+			startActivity(intent);
 			break;
 		default:
 			break;
@@ -267,7 +269,8 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 	}
 
 	@Override
-	public void onGeofenceExit() {
+	public void onGeofenceExit(double distance) {
+		showDebugToast("exit:"+distance);
 		NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notif = new Notification(R.drawable.search_btn, "离开围栏", 0);
 		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notifacation_view);
@@ -278,7 +281,8 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 	}
 
 	@Override
-	public void onGeofenceIn() {
+	public void onGeofenceIn(double distance) {
+		showDebugToast("in:"+distance);
 		NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notif = new Notification(R.drawable.search_btn, "进入围栏", 0);
 		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notifacation_view);
@@ -295,7 +299,8 @@ public class MainActivity extends BaseActivity implements IMainHandler,OnClickLi
 	public void onEventMainThread(SetGeofenceResultBean bean){
 		dissmisWaitingDialog();
 		if(bean.isResult()){
-			Toast.makeText(MainActivity.this, "给对方设置电子围栏成功", Toast.LENGTH_LONG).show();
+			showDebugToast("给对方设置电子围栏成功");
+			mPresenter.saveGeoFenceInfo(MainActivity.this, bean);
 		}
 	}
 }

@@ -28,4 +28,6 @@ public class Contants {
 	public static int TIME_OUT = 20 * 1000;
 	//百度API Key
 	public static final String BAIDU_API_KEY = "Al8y2B0qikgt6viHQXAYbgZp";
+	//电子围栏提醒的时间间隔
+	public static final int BD_GEOFENCE_INTERVAL = 10 * 1000;
 }

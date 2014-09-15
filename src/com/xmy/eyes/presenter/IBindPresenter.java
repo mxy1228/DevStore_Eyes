@@ -6,7 +6,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.os.Binder;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -18,9 +17,7 @@ import com.xmy.eyes.PushMessageContants;
 import com.xmy.eyes.R;
 import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.bean.ReqBindJsonBean;
-import com.xmy.eyes.bean.ReqBindResultJsonBean;
 import com.xmy.eyes.impl.IBindHandler;
-import com.xmy.eyes.util.JSONUtil;
 import com.xmy.eyes.util.SPUtil;
 
 public class IBindPresenter {
@@ -94,6 +91,7 @@ public class IBindPresenter {
 				mHandler.onBind(true);
 				//成功后，将用户昵称存储到SP中，以作为是否已经登录过的标志
 				SPUtil.setUserName(EyesApplication.mMyUser.getUsername());
+				SPUtil.setUID(EyesApplication.mMyUser.getUid());
 			}
 			
 			@Override

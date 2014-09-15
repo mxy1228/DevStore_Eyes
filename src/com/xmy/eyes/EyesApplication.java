@@ -37,6 +37,7 @@ public class EyesApplication extends Application {
 		super.onCreate();
 		mContext = getApplicationContext();
 		mGeofenceClient = new GeofenceClient(getApplicationContext());
+		mGeofenceClient.setInterval(Contants.BD_GEOFENCE_INTERVAL);//设置电子围栏提醒的时间间隔
 		SDKInitializer.initialize(getApplicationContext());
 		mTencent = Tencent.createInstance("1102488799", getApplicationContext());
 		mMiClient = GalaxyOAuthClient.createInstance(Contants.MI_APP_ID);

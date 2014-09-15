@@ -99,36 +99,36 @@ public class ILoginPresenter {
 	/*
 	 * QQ登录
 	 */
-//	public void tencentLogin(final Activity act){
-//		EyesApplication.mTencent.login(act, "get_simple_userinfo", new IUiListener() {
-//			
-//			@Override
-//			public void onError(UiError arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onComplete(Object arg0) {
-//				ELog.d("QQ login result = "+arg0.toString());
-//				try {
-//					QQLoginResultBean bean = JSONUtil.getMapper().readValue(arg0.toString(), new TypeReference<QQLoginResultBean>() {
-//					});
-//					if(bean != null){
-////						registOnBmob(act, bean);
-//					}
-//				} catch (Exception e) {
-//					ELog.e(e);
-//				}
-//			}
-//			
-//			@Override
-//			public void onCancel() {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-//	}
+	public void tencentLogin(final Activity act){
+		EyesApplication.mTencent.login(act, "get_simple_userinfo", new IUiListener() {
+			
+			@Override
+			public void onError(UiError arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onComplete(Object arg0) {
+				ELog.d("QQ login result = "+arg0.toString());
+				try {
+					QQLoginResultBean bean = JSONUtil.getMapper().readValue(arg0.toString(), new TypeReference<QQLoginResultBean>() {
+					});
+					if(bean != null){
+//						registOnBmob(act, bean);
+					}
+				} catch (Exception e) {
+					ELog.e(e);
+				}
+			}
+			
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
 	
 	/**
 	 * 百度登陆
@@ -138,6 +138,7 @@ public class ILoginPresenter {
 		if(SPUtil.isLogin()){
 			//用户已经登录，在Bmob上查询用户注册的信息
 			BaiduUserInfo info = new BaiduUserInfo();
+			info.setUserid(SPUtil.getUID());
 			info.setUsername(SPUtil.getUserName());
 			registOnBmob(atv, info);
 		}else{
@@ -196,7 +197,7 @@ public class ILoginPresenter {
 	 */
 	public void registOnBmob(final Context ctx,final BaiduUserInfo info){
 		BmobQuery<MyUser> query = new BmobQuery<MyUser>();
-		query.addWhereEqualTo(Contants.BMOB_USER_NAME, info.getUsername());
+		query.addWhereEqualTo(Contants.BMOB_UID, info.getUserid());
 		query.findObjects(ctx, new FindListener<MyUser>() {
 
 			@Override
@@ -228,7 +229,9 @@ public class ILoginPresenter {
 					});
 				}else{
 					//已经注册
-					ELog.d("uid = "+info.getUsername()+" 已经注册");
+					ELog.d("uid = "+info.getUserid()+" 已经注册");
+					SPUtil.setUID(arg0.get(0).getUid());
+					SPUtil.setUserName(arg0.get(0).getUsername());
 					mHandler.onSuccessRegistOnBmob(arg0.get(0));
 				}
 			}

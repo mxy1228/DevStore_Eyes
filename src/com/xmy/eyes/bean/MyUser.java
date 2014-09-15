@@ -12,6 +12,10 @@ public class MyUser extends BmobObject implements Serializable{
 //	private String installationId;
 //	private String bindInstallationId;
 	private String bindedUID;
+	private Boolean isFenced;
+	private String lat;
+	private String lng;
+	private String radius;
 	
 	public String getUid() {
 		return uid;
@@ -36,6 +40,30 @@ public class MyUser extends BmobObject implements Serializable{
 	}
 	public void setBindedUID(String bindedUID) {
 		this.bindedUID = bindedUID;
+	}
+	public Boolean getIsFenced() {
+		return isFenced;
+	}
+	public void setIsFenced(Boolean isFenced) {
+		this.isFenced = isFenced;
+	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getLng() {
+		return lng;
+	}
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+	public String getRadius() {
+		return radius;
+	}
+	public void setRadius(String radius) {
+		this.radius = radius;
 	}
 	
 	

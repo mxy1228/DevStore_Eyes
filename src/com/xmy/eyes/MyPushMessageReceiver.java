@@ -3,16 +3,6 @@ package com.xmy.eyes;
 import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONObject;
 
-import com.baidu.mapapi.search.poi.PoiDetailResult;
-import com.baidu.mapapi.search.poi.PoiResult;
-import com.baidu.mapapi.search.sug.SuggestionResult;
-import com.xmy.eyes.bean.ReqBindJsonBean;
-import com.xmy.eyes.bean.ReqBindResultJsonBean;
-import com.xmy.eyes.bean.SetGeofenceResultBean;
-import com.xmy.eyes.impl.IMainHandler;
-import com.xmy.eyes.presenter.IMainPresenter;
-import com.xmy.eyes.util.JSONUtil;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -21,6 +11,18 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import cn.bmob.push.PushConstants;
+
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.xmy.eyes.bean.GeofenceBean;
+import com.xmy.eyes.bean.ReqBindJsonBean;
+import com.xmy.eyes.bean.ReqBindResultJsonBean;
+import com.xmy.eyes.bean.SetGeofenceResultBean;
+import com.xmy.eyes.impl.IMainHandler;
+import com.xmy.eyes.presenter.IMainPresenter;
+import com.xmy.eyes.util.JSONUtil;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -28,19 +30,25 @@ import de.greenrobot.event.EventBus;
  */
 public class MyPushMessageReceiver extends BroadcastReceiver {
 
+	private Context mContext;
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		this.mContext = context;
 		NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		String content = intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
 		ELog.d("MyPushMessageReceiver:receive:"+EyesApplication.mMyUser.getUsername()+":"+intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
-		Toast.makeText(context, content, Toast.LENGTH_LONG).show();
+		if(Config.DEBUG){
+			Toast.makeText(context, content, Toast.LENGTH_LONG).show();
+		}
 		try {
 			JSONObject obj = new JSONObject(content);
 			int type = obj.getInt(PushMessageContants.TYPE);
 			switch (type) {
 			case PushMessageContants.MSG_TYPE_GEOFENCE:
-				
+				GeofenceBean geofenceBean = JSONUtil.getMapper().readValue(content, new TypeReference<GeofenceBean>() {
+				});
+				showNotification(geofenceBean);
 				break;
 			//普通消息
 			case PushMessageContants.MSG_TYPE_NORMAL:
@@ -51,17 +59,17 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 				notif.flags = Notification.FLAG_NO_CLEAR;
 				manager.notify(1, notif);
 				break;
-			//设置电子围栏
+			//设置并启动电子围栏
 			case PushMessageContants.MSG_TYPE_SET_GEOFENCE:
-				double x = obj.getDouble(PushMessageContants.X);
-				double y = obj.getDouble(PushMessageContants.Y);
+				double lon = obj.getDouble(PushMessageContants.LON);
+				double lat = obj.getDouble(PushMessageContants.LAT);
 				int radius = obj.getInt(PushMessageContants.RADIUS);
-				new IMainPresenter(new IMain()).setAndStartBDGeofence(x, y, radius);
+				new IMainPresenter(new IMain()).setAndStartBDGeofence(context,lon, lat, radius);
 				break;
 			//设置电子围栏结果
 			case PushMessageContants.MSG_TYPE_GEOFENCE_RESULT:
-				SetGeofenceResultBean bean = new SetGeofenceResultBean();
-				bean.setResult(obj.getBoolean(PushMessageContants.RESULT));
+				SetGeofenceResultBean bean = JSONUtil.getMapper().readValue(content, new TypeReference<SetGeofenceResultBean>() {
+				});
 				EventBus.getDefault().post(bean);
 				break;
 			//别人请求绑定
@@ -83,6 +91,16 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 			ELog.e(e);
 		}
 		
+	}
+	
+	private void showNotification(GeofenceBean bean){
+		NotificationManager manager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notif = new Notification(R.drawable.search_btn, bean.isIn() ? "进入围栏" : "离开围栏", 0);
+		RemoteViews view = new RemoteViews(mContext.getPackageName(), R.layout.notifacation_view);
+		view.setTextViewText(R.id.notification_view_tv, bean.isIn() ? "进入围栏" : "离开围栏");
+		notif.contentView = view;
+		notif.flags = Notification.FLAG_NO_CLEAR;
+		manager.notify(1, notif);
 	}
 	
 	private class IMain implements IMainHandler{
@@ -118,16 +136,19 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 		}
 
 		@Override
-		public void onGeofenceExit() {
-			// TODO Auto-generated method stub
-			
+		public void onGeofenceExit(double distance) {
+			if(Config.DEBUG){
+				Toast.makeText(mContext, "Exit:"+distance, Toast.LENGTH_LONG).show();
+			}
 		}
 
 		@Override
-		public void onGeofenceIn() {
-			// TODO Auto-generated method stub
-			
+		public void onGeofenceIn(double distance) {
+			if(Config.DEBUG){
+				Toast.makeText(mContext, "In:"+distance, Toast.LENGTH_LONG).show();
+			}
 		}
+
 		
 	}
 

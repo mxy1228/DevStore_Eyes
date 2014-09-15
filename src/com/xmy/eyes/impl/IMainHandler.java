@@ -37,7 +37,14 @@ public interface IMainHandler {
 	 */
 	public void onPOISeach(PoiResult result);
 	
-	public void onGeofenceExit();
-	public void onGeofenceIn();
+	/**
+	 * 离开电子围栏
+	 */
+	public void onGeofenceExit(double distance);
+	
+	/**
+	 * 进入电子围栏
+	 */
+	public void onGeofenceIn(double distance);
 	
 }

@@ -71,23 +71,4 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 		startActivity(intent);
 	}
 
-	/**
-	 * QQ信息在小米结构化存储注册成功
-	 * @param bean
-	 */
-//	public void onEventMainThread(QQLoginOnMiResultBean bean){
-//		//在小米成功注册后，查询云存储上该QQ号是否已注册过
-//		this.mPresenter.registInMiDB(bean);
-//	}
-	
-	/**
-	 * 查询在云存储上是否已经注册
-	 * @param bean
-	 */
-//	public void onEventMainThread(QQRegistOnMiResultBean bean){
-//		if(bean.ismRegisted()){
-//			//如果已经注册
-//			//TODO
-//		}
-//	}
 }
