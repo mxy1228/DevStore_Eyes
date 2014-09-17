@@ -1,5 +1,6 @@
 package com.xmy.eyes.impl;
 
+import com.baidu.location.BDLocation;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
@@ -17,7 +18,7 @@ public interface IMainHandler {
 	 * @param latitude
 	 * @param city
 	 */
-	public void onLocated(double longitude,double latitude,String city);
+	public void onLocated(BDLocation location,double distance);
 	
 	/**
 	 * 根据关键字进行地点搜索
@@ -37,14 +38,5 @@ public interface IMainHandler {
 	 */
 	public void onPOISeach(PoiResult result);
 	
-	/**
-	 * 离开电子围栏
-	 */
-	public void onGeofenceExit(double distance);
-	
-	/**
-	 * 进入电子围栏
-	 */
-	public void onGeofenceIn(double distance);
 	
 }

@@ -63,12 +63,19 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 		intent.putExtra("user", user);
 		if(user.getBind() != null){
 			//已经成功绑定
-			intent.setClass(LoginActivity.this,MainActivity.class);
+			if(user.getRadius() == null ){
+				//如果还没设置围栏，则跳转到MapActivity
+				intent.setClass(LoginActivity.this,MapActivity.class);
+			}else{
+				//如果已经设置了围栏，则跳转到MainActivity
+				intent.setClass(LoginActivity.this, MainActivity.class);
+			}
 		}else{
 			//还未绑定
 			intent.setClass(LoginActivity.this,BindActivity.class);
 		}
 		startActivity(intent);
+		LoginActivity.this.finish();
 	}
 
 }

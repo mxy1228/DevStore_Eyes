@@ -120,11 +120,9 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	public void onBind(boolean result) {
 		if(result){
 			//绑定成功
-//			mSetBtn.setVisibility(View.VISIBLE);
-//			mWaitBnt.setVisibility(View.VISIBLE);
-//			mET.setVisibility(View.GONE);
-			Intent intent = new Intent(BindActivity.this,MainActivity.class);
+			Intent intent = new Intent(BindActivity.this,MapActivity.class);
 			startActivity(intent);
+			BindActivity.this.finish();
 		}else{
 			//绑定失败
 			

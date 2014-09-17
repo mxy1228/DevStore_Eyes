@@ -12,16 +12,19 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import cn.bmob.push.PushConstants;
 
+import com.baidu.location.BDLocation;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.xmy.eyes.bean.GeofenceBean;
 import com.xmy.eyes.bean.ReqBindJsonBean;
 import com.xmy.eyes.bean.ReqBindResultJsonBean;
+import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.bean.SetGeofenceResultBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 import com.xmy.eyes.util.JSONUtil;
+import com.xmy.eyes.view.MainActivity;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,13 +34,17 @@ import de.greenrobot.event.EventBus;
 public class MyPushMessageReceiver extends BroadcastReceiver {
 
 	private Context mContext;
+	private IMainPresenter mPresenter;
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		if(mPresenter == null){
+			mPresenter = new IMainPresenter(new IMain());
+		}
 		this.mContext = context;
 		NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		String content = intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
-		ELog.d("MyPushMessageReceiver:receive:"+EyesApplication.mMyUser.getUsername()+":"+intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
+		ELog.d("MyPushMessageReceiver:receive:"+":"+intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
 		if(Config.DEBUG){
 			Toast.makeText(context, content, Toast.LENGTH_LONG).show();
 		}
@@ -48,6 +55,7 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 			case PushMessageContants.MSG_TYPE_GEOFENCE:
 				GeofenceBean geofenceBean = JSONUtil.getMapper().readValue(content, new TypeReference<GeofenceBean>() {
 				});
+				EventBus.getDefault().post(geofenceBean);
 				showNotification(geofenceBean);
 				break;
 			//普通消息
@@ -64,7 +72,7 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 				double lon = obj.getDouble(PushMessageContants.LON);
 				double lat = obj.getDouble(PushMessageContants.LAT);
 				int radius = obj.getInt(PushMessageContants.RADIUS);
-				new IMainPresenter(new IMain()).setAndStartBDGeofence(context,lon, lat, radius);
+				mPresenter.setAndStartBDGeofence(context,lon, lat, radius);
 				break;
 			//设置电子围栏结果
 			case PushMessageContants.MSG_TYPE_GEOFENCE_RESULT:
@@ -83,6 +91,16 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 				ReqBindResultJsonBean reqBindResultBean = JSONUtil.getMapper().readValue(content, new TypeReference<ReqBindResultJsonBean>() {
 				});
 				EventBus.getDefault().post(reqBindResultBean);
+				break;
+			//收到对方请求定位
+			case PushMessageContants.MSG_TYPE_REQUEST_LOCATE:
+				mPresenter.requestMyLocate();
+				break;
+			//收到对方请求定位结果
+			case PushMessageContants.MSG_TYPE_REQUEST_LOCATE_RESULT:
+				RequestLocateResultBean locateResultBean = JSONUtil.getMapper().readValue(content, new TypeReference<RequestLocateResultBean>() {
+				});
+				EventBus.getDefault().post(locateResultBean);
 				break;
 			default:
 				break;
@@ -111,11 +129,6 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 			
 		}
 
-		@Override
-		public void onLocated(double longitude, double latitude, String city) {
-			// TODO Auto-generated method stub
-			
-		}
 
 		@Override
 		public void onSuggestionSearch(SuggestionResult result) {
@@ -135,18 +148,11 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 			
 		}
 
-		@Override
-		public void onGeofenceExit(double distance) {
-			if(Config.DEBUG){
-				Toast.makeText(mContext, "Exit:"+distance, Toast.LENGTH_LONG).show();
-			}
-		}
 
 		@Override
-		public void onGeofenceIn(double distance) {
-			if(Config.DEBUG){
-				Toast.makeText(mContext, "In:"+distance, Toast.LENGTH_LONG).show();
-			}
+		public void onLocated(BDLocation location, double distance) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		

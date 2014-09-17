@@ -2,9 +2,10 @@ package com.xmy.eyes.presenter;
 
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
-
-import cn.bmob.v3.listener.SaveListener;
+import android.content.Intent;
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.listener.UpdateListener;
 
 import com.baidu.location.BDLocation;
@@ -28,10 +29,13 @@ import com.baidu.mapapi.utils.DistanceUtil;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.PushMessageContants;
-import com.xmy.eyes.bean.GeofenceBean;
+import com.xmy.eyes.bean.RequestLocateBean;
+import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.bean.SetGeofenceResultBean;
 import com.xmy.eyes.impl.IMainHandler;
+import com.xmy.eyes.service.GeoFenceService;
 import com.xmy.eyes.util.SPUtil;
+import com.xmy.eyes.view.MainActivity;
 
 public class IMainPresenter{
 
@@ -62,21 +66,33 @@ public class IMainPresenter{
 		}
 	}
 	
-	public void setAndStartBDGeofence(Context context,double lon,double lat,int radius){
+	/**
+	 * 设置并启动电子围栏
+	 * @param context
+	 * @param lon
+	 * @param lat
+	 * @param radius
+	 */
+	public void setAndStartBDGeofence(Context context,final double lng,final double lat,final int radius){
 		//将电子围栏的数据保存到SP中
-		SPUtil.saveGeofence(lon, lat, radius);
-		requstLocate(true);
+		SPUtil.saveGeofence(lng, lat, radius);
+		requestMyLocate();
+//		Intent intent = new Intent(context,GeoFenceService.class);
+//		intent.putExtra("lat", lat);
+//		intent.putExtra("lng", lng);
+//		intent.putExtra("radius", radius);
+//		context.startService(intent);
 		try {
 			SetGeofenceResultBean bean = new SetGeofenceResultBean();
 			bean.setType(PushMessageContants.MSG_TYPE_GEOFENCE_RESULT);
 			bean.setResult(true);
 			bean.setLat(lat);
-			bean.setLng(lon);
+			bean.setLng(lng);
 			bean.setRadius(radius);
 			BmobPushMsgPresenter.getDefault().sendMessage(bean,EyesApplication.mMyUser.getBindedUID());
 			//然后将围栏信息保存到Bmob数据中心
 			EyesApplication.mMyUser.setLat(lat+"");
-			EyesApplication.mMyUser.setLng(lon+"");
+			EyesApplication.mMyUser.setLng(lng+"");
 			EyesApplication.mMyUser.setRadius(radius+"");
 			EyesApplication.mMyUser.setIsFenced(true);
 			EyesApplication.mMyUser.update(context, new UpdateListener() {
@@ -84,6 +100,7 @@ public class IMainPresenter{
 				@Override
 				public void onSuccess() {
 					ELog.d("setAndStartBDGeofence:onSuccess");
+					SPUtil.saveGeofence(lng, lat, radius);
 				}
 				
 				@Override
@@ -125,31 +142,42 @@ public class IMainPresenter{
 //	}
 	
 	/**
+	 * 请求对方的位置
+	 */
+	public void requestTaLocate(){
+		RequestLocateBean bean = new RequestLocateBean();
+		bean.setType(PushMessageContants.MSG_TYPE_REQUEST_LOCATE);
+		BmobPushMsgPresenter.getDefault().sendMessage(bean, EyesApplication.mMyUser.getBindedUID());
+	}
+	
+	
+	/**
 	 * 发起百度定位
 	 * @param ctx
 	 * @param loop 是否循环定位
 	 */
-	public void requstLocate(final boolean loop){
+	public void requestMyLocate(){
 		final LocationClient client = new LocationClient(EyesApplication.mContext);
 		BDLocationListener listener = new BDLocationListener() {
 			
 			@Override
 			public void onReceiveLocation(BDLocation arg0) {
 				ELog.d("longtitude="+arg0.getLongitude()+"&latitude="+arg0.getLatitude()+"&city="+arg0.getCity());
-				if(loop){
-					//循环定位，计算位置和围栏空间距离
-					LatLng curP = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-					caculateDistance(curP);
-				}else{
-					//只定位一次，将定位结果返回给视图层
-					mHandler.onLocated(arg0.getLongitude(), arg0.getLatitude(),arg0.getCity());
-					//一定要再成功定位后停止client，要不然会循环定位
-					client.stop();
-				}
+				RequestLocateResultBean bean = new RequestLocateResultBean();
+				bean.setType(PushMessageContants.MSG_TYPE_REQUEST_LOCATE_RESULT);
+				bean.setLat(arg0.getLatitude());
+				bean.setLng(arg0.getLongitude());
+				bean.setCity(arg0.getCity());
+				LatLng geoFenceLatLng = SPUtil.getGeofence();
+				LatLng curLatLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
+				double distance = DistanceUtil.getDistance(geoFenceLatLng,curLatLng);
+				bean.setDistance(distance);
+				BmobPushMsgPresenter.getDefault().sendMessage(bean, EyesApplication.mMyUser.getBindedUID());
+				mHandler.onLocated(arg0, distance);
 			}
 		};
 		LocationClientOption option = new LocationClientOption();
-		option.setLocationMode(LocationMode.Hight_Accuracy);
+		option.setLocationMode(LocationMode.Device_Sensors);
 		option.setCoorType("bd09ll");
 		option.setScanSpan(15000);//设置发起定位请求的间隔时间为15s
 		option.setIsNeedAddress(true);//返回的定位结果包含地址信息
@@ -163,25 +191,25 @@ public class IMainPresenter{
 	 * 计算当前位置和电子围栏中的空间距离
 	 * @param p
 	 */
-	public void caculateDistance(LatLng p){
-		LatLng geofenceP = SPUtil.getGeofence();
-		double distance = DistanceUtil.getDistance(p, geofenceP);
-		GeofenceBean bean = new GeofenceBean();
-		bean.setType(PushMessageContants.MSG_TYPE_GEOFENCE);
-		bean.setLat(p.latitude);
-		bean.setLng(p.longitude);
-		bean.setDistance(distance);
-		if(distance <= SPUtil.getRadius()){
-			//在电子围栏范围内
-			mHandler.onGeofenceIn(distance);
-			bean.setIn(true);
-		}else{
-			//不在电子围栏范围内
-			mHandler.onGeofenceExit(distance);
-			bean.setIn(false);
-		}
-		BmobPushMsgPresenter.getDefault().sendMessage(bean, EyesApplication.mMyUser.getBindedUID());
-	}
+//	public void caculateDistance(LatLng p){
+//		LatLng geofenceP = SPUtil.getGeofence();
+//		double distance = DistanceUtil.getDistance(p, geofenceP);
+//		GeofenceBean bean = new GeofenceBean();
+//		bean.setType(PushMessageContants.MSG_TYPE_GEOFENCE);
+//		bean.setLat(p.latitude);
+//		bean.setLng(p.longitude);
+//		bean.setDistance(distance);
+//		if(distance <= SPUtil.getRadius()){
+//			//在电子围栏范围内
+//			mHandler.onGeofenceIn(p.latitude,p.longitude,distance);
+//			bean.setIn(true);
+//		}else{
+//			//不在电子围栏范围内
+//			mHandler.onGeofenceExit(p.latitude,p.longitude,distance);
+//			bean.setIn(false);
+//		}
+//		BmobPushMsgPresenter.getDefault().sendMessage(bean, EyesApplication.mMyUser.getBindedUID());
+//	}
 	
 	/**
 	 * 根据关键字和城市，使用百度地图进行搜索
@@ -279,16 +307,19 @@ public class IMainPresenter{
 	 * 保存电子围栏设置信息
 	 * @param bean
 	 */
-	public void saveGeoFenceInfo(Context ctx,SetGeofenceResultBean bean){
+	public void saveGeoFenceInfo(final Activity act,SetGeofenceResultBean bean){
 		EyesApplication.mMyUser.setLat(bean.getLat()+"");
 		EyesApplication.mMyUser.setLng(bean.getLng()+"");
 		EyesApplication.mMyUser.setRadius(bean.getRadius()+"");
 		EyesApplication.mMyUser.setIsFenced(false);
-		EyesApplication.mMyUser.update(ctx, new UpdateListener() {
+		EyesApplication.mMyUser.update(act, new UpdateListener() {
 			
 			@Override
 			public void onSuccess() {
 				ELog.d("saveGeoFenceInfo:success");
+				Intent intent = new Intent(act,MainActivity.class);
+				act.startActivity(intent);
+				act.finish();
 			}
 			
 			@Override

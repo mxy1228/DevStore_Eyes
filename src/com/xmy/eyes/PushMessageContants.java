@@ -12,8 +12,12 @@ public class PushMessageContants {
 	public static final int MSG_TYPE_GEOFENCE_RESULT = 4;
 	//消息类型：请求绑定
 	public static final int MSG_TYPE_REQUEST_BIND = 5;
-	//
+	//消息类型：请求绑定结果
 	public static final int MSG_TYPE_REQUEST_BIND_RESULT = 6;
+	//消息类型：请求定位
+	public static final int MSG_TYPE_REQUEST_LOCATE = 7;
+	//消息类型：请求定位结果
+	public static final int MSG_TYPE_REQUEST_LOCATE_RESULT = 8;
 	
 	public static final String TYPE = "type";
 	public static final String CONTENT = "content";

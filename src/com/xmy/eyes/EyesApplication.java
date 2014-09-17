@@ -6,15 +6,13 @@ import cn.bmob.push.BmobPush;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobPushManager;
 
+import com.amap.api.location.LocationManagerProxy;
 import com.baidu.api.Baidu;
 import com.baidu.location.GeofenceClient;
 import com.baidu.mapapi.SDKInitializer;
 import com.tencent.tauth.Tencent;
 import com.xiaomi.infra.galaxy.android.GalaxyOAuthClient;
 import com.xmy.eyes.bean.MyUser;
-/**
- * 为使用百度推送，需将父类修改为com.baidu.frontia.FrontiaApplication。
- */
 public class EyesApplication extends Application {
 	
 	
@@ -31,13 +29,15 @@ public class EyesApplication extends Application {
 	public static Baidu mBaidu;
 	//Bmob推送
 	public static BmobPushManager mBmobPushManager;
+	//高德地图
+	public static LocationManagerProxy mGaodeManager;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		mContext = getApplicationContext();
 		mGeofenceClient = new GeofenceClient(getApplicationContext());
-		mGeofenceClient.setInterval(Contants.BD_GEOFENCE_INTERVAL);//设置电子围栏提醒的时间间隔
+		mGeofenceClient.setInterval(Contants.GEOFENCE_INTERVAL);//设置电子围栏提醒的时间间隔
 		SDKInitializer.initialize(getApplicationContext());
 		mTencent = Tencent.createInstance("1102488799", getApplicationContext());
 		mMiClient = GalaxyOAuthClient.createInstance(Contants.MI_APP_ID);
@@ -46,5 +46,6 @@ public class EyesApplication extends Application {
 		mBaidu = new Baidu(Contants.BAIDU_APPID, getApplicationContext());
 		mBmobPushManager = new BmobPushManager(getApplicationContext());
 		BmobPush.startWork(getApplicationContext(), Contants.BMOB_APP_ID);
+		mGaodeManager = LocationManagerProxy.getInstance(this);
 	}
 }
