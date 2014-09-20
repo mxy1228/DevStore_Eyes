@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:background="#006ba6"
+    android:orientation="vertical" 
+    android:padding="10.0dip">
     
-
+	
     <TextView
         android:id="@+id/notification_view_tv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textSize="23.0sp"
+        android:textColor="#FFFFFF"/>
+    
+    <TextView
+        android:id="@+id/notification_time_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13.0sp"
+        android:textColor="#e5e5e6"/>
     
 </LinearLayout>

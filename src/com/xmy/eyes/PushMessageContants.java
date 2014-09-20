@@ -18,6 +18,8 @@ public class PushMessageContants {
 	public static final int MSG_TYPE_REQUEST_LOCATE = 7;
 	//消息类型：请求定位结果
 	public static final int MSG_TYPE_REQUEST_LOCATE_RESULT = 8;
+	//消息类型：围栏状态改变
+	public static final int MSG_GEOFENCE_STATE_CHANGE = 9;
 	
 	public static final String TYPE = "type";
 	public static final String CONTENT = "content";

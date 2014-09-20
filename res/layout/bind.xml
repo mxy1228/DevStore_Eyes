@@ -2,34 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:paddingTop="10.0dip"
+    android:orientation="vertical"
+    android:background="@color/bg" >
     
-    <EditText 
-        android:id="@+id/bind_username_et"
+    <LinearLayout 
+        android:id="@+id/bind_et_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionSearch"
+        android:gravity="center_vertical"
+        android:paddingLeft="10.0dip"
+        android:paddingRight="10.0dip"
         android:visibility="gone"
-        android:hint="@string/search_hint"
-        android:singleLine="true"/>
+        android:orientation="horizontal">
+        
+        <EditText 
+	        android:id="@+id/bind_username_et"
+	        android:layout_width="0.0dip"
+	        android:layout_weight="1.0"
+	        android:layout_height="wrap_content"
+	        android:imeOptions="actionSearch"
+	        android:hint="@string/search_hint"
+	        android:singleLine="true"/>
+        
+         <ImageButton 
+            android:id="@+id/bind_search_ibtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_btn_press"
+            android:background="@null"
+            android:contentDescription="@string/search_hint"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+        
+    </LinearLayout>
 
     <Button 
         android:id="@+id/bind_wait_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/waite_for_geofence"/>
+        android:text="@string/waite_for_geofence"
+        style="@style/btn"/>
     
     <Button
         android:id="@+id/bind_set_geofence_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/set_geofence"/>
+        android:text="@string/set_geofence"
+        android:layout_marginTop="10.0dip"
+        style="@style/btn"/>
     
     <TextView
         android:id="@+id/bind_wait_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18.0sp"
         android:visibility="gone"
+        android:textColor="#08406c"
         android:text="@string/waiting"/>
     
 </LinearLayout>

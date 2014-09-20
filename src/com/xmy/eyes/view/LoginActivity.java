@@ -2,25 +2,26 @@ package com.xmy.eyes.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-import cn.bmob.push.BmobPush;
-
-import com.xmy.eyes.Contants;
 import com.xmy.eyes.EyesApplication;
-import com.xmy.eyes.bean.MyBmobInstallation;
+import com.xmy.eyes.R;
 import com.xmy.eyes.bean.MyUser;
-import com.xmy.eyes.bean.QQLoginResultBean;
 import com.xmy.eyes.impl.ILoginHandler;
 import com.xmy.eyes.presenter.ILoginPresenter;
 
-public class LoginActivity extends BaseActivity implements ILoginHandler{
+public class LoginActivity extends BaseActivity implements ILoginHandler,OnClickListener{
 
 	private ILoginPresenter mPresenter;
 	
+	private Button mLoginBtn;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		setContentView(R.layout.login);
 		initView();
 		initData();
 		initEvent();
@@ -28,29 +29,17 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 	
 	@Override
 	protected void initView() {
-		// TODO Auto-generated method stub
-
+		this.mLoginBtn = (Button)findViewById(R.id.login_btn);
 	}
 
 	@Override
 	protected void initData() {
 		this.mPresenter = new ILoginPresenter(this);
-		this.mPresenter.baiduLogin(this);
-//		EventBus.getDefault().register(this);
 	}
 
 	@Override
 	protected void initEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * QQ登录成功回调
-	 */
-	@Override
-	public void onQQLoginSuccess(QQLoginResultBean bean) {
-		
+		this.mLoginBtn.setOnClickListener(this);
 	}
 
 	/**
@@ -76,6 +65,18 @@ public class LoginActivity extends BaseActivity implements ILoginHandler{
 		}
 		startActivity(intent);
 		LoginActivity.this.finish();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.login_btn:
+			this.mPresenter.baiduLogin(this);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }

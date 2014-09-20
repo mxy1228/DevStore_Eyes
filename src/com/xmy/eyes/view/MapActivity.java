@@ -53,7 +53,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	private MapView mMapView;
 	private EditText mET;
 	private ImageButton mSearchIBtn;
-	private Button mTestBtn;
+//	private Button mTestBtn;
 	
 	private IMainPresenter mPresenter;
 	private BaiduMap mMap;
@@ -82,7 +82,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 		this.mMapView = (MapView)findViewById(R.id.main_map_view);
 		this.mET = (EditText)findViewById(R.id.main_et);
 		this.mSearchIBtn = (ImageButton)findViewById(R.id.main_search_ibtn);
-		this.mTestBtn = (Button)findViewById(R.id.testBtn);
+//		this.mTestBtn = (Button)findViewById(R.id.testBtn);
 	}
 
 	@Override
@@ -97,8 +97,8 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 			this.mPresenter.requestMyLocate();
 		}
 		EventBus.getDefault().register(this);
-		LatLng geofence = new LatLng(Double.valueOf(EyesApplication.mMyUser.getLat()), Double.valueOf(EyesApplication.mMyUser.getLng()));
-		if(geofence != null){
+		if(EyesApplication.mMyUser.getLat() != null && EyesApplication.mMyUser.getLng() != null){
+			LatLng geofence = new LatLng(Double.valueOf(EyesApplication.mMyUser.getLat()), Double.valueOf(EyesApplication.mMyUser.getLng()));
 			OverlayOptions opt = new CircleOptions()
 			.center(geofence)
 			.radius(Integer.valueOf(EyesApplication.mMyUser.getRadius()))
@@ -112,7 +112,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	protected void initEvent() {
 		this.mSearchIBtn.setOnClickListener(this);
 		this.mET.setOnEditorActionListener(this);
-		this.mTestBtn.setOnClickListener(this);
+//		this.mTestBtn.setOnClickListener(this);
 	}
 	
 	@Override
@@ -156,14 +156,14 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 		case R.id.main_search_ibtn:
 			poiSearch();
 			break;
-		case R.id.testBtn:
-			BmobQuery<BmobInstallation> query = new BmobQuery<BmobInstallation>();
-			query.addWhereEqualTo("uid", EyesApplication.mMyUser.getBindedUID());
-			EyesApplication.mBmobPushManager.setQuery(query);
-			EyesApplication.mBmobPushManager.pushMessage("点对点测试");
-//			Intent intent = new Intent(MapActivity.this,TestActivity.class);
-//			startActivity(intent);
-			break;
+//		case R.id.testBtn:
+//			BmobQuery<BmobInstallation> query = new BmobQuery<BmobInstallation>();
+//			query.addWhereEqualTo("uid", EyesApplication.mMyUser.getBindedUID());
+//			EyesApplication.mBmobPushManager.setQuery(query);
+//			EyesApplication.mBmobPushManager.pushMessage("点对点测试");
+////			Intent intent = new Intent(MapActivity.this,TestActivity.class);
+////			startActivity(intent);
+//			break;
 		default:
 			break;
 		}

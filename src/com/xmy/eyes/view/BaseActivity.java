@@ -1,15 +1,19 @@
 package com.xmy.eyes.view;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.xmy.eyes.Config;
+import com.xmy.eyes.R;
 import com.xmy.eyes.widget.WaitingDialog;
 
 public abstract class BaseActivity extends FragmentActivity {
 
 	private WaitingDialog mWaitingDialog;
+	protected ActionBar mActionBar;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -21,6 +25,14 @@ public abstract class BaseActivity extends FragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		this.mWaitingDialog.dismiss();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		mActionBar = getActionBar();
+		mActionBar.setIcon(R.drawable.devstore_icon);
+		mActionBar.setDisplayShowTitleEnabled(false);
+		return true;
 	}
 	
 	protected abstract void initView();

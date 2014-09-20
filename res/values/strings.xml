@@ -7,9 +7,13 @@
     <string name="ok">确定</string>
 	<string name="cancel">取消</string>
 	<string name="radius_title">请设置围栏半径(0~300米)</string>
-	<string name="search_hint">请输入百度用户名</string>
+	<string name="search_hint">请输要绑定的百度用户名</string>
 	<string name="set_geofence">我要给他/她设置电子围栏</string>
 	<string name="waite_for_geofence">等待设置电子围栏</string>
-	<string name="waiting">请等待...</string>
+	<string name="waiting">正在等待对方的请求，请稍后...</string>
 	<string name="req_bind_msg">%1$s请求和你绑定</string>
+	<string name="login">登录</string>
+	<string name="no_user">该用户还未注册DevstoreEye</string>
+	<string name="had_bind">%1$s已经和别人绑定啦</string>
+	<string name="confirm_bind">确定要和%1$s绑定吗？</string>
 </resources>

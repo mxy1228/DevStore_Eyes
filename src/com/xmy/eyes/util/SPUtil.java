@@ -15,6 +15,7 @@ public class SPUtil {
 	private static final String LON = "lon";
 	private static final String RADIUS = "radius";
 	private static final String UID = "uid";
+	private static final String IN_GEOFENCE = "in";
 
 	
 	/**
@@ -87,10 +88,15 @@ public class SPUtil {
 	 * @return
 	 */
 	public static LatLng getGeofence(){
-		double lat = Double.valueOf(getUserInfoSP().getString(LAT, null));
-		double lng = Double.valueOf(getUserInfoSP().getString(LON, null));
-		LatLng p = new LatLng(lat, lng);
-		return p;
+		String slat = getUserInfoSP().getString(LAT, null);
+		String slon = getUserInfoSP().getString(LON, null);
+		if(slat != null && slon != null){
+			double lat = Double.valueOf(slat);
+			double lng = Double.valueOf(slon);
+			LatLng p = new LatLng(lat, lng);
+			return p;
+		}
+		return null;
 	}
 	
 	/**
@@ -100,5 +106,44 @@ public class SPUtil {
 	public static int getRadius(){
 		int radius = getUserInfoSP().getInt(RADIUS, 0);
 		return radius;
+	}
+	
+	private static boolean getPresState(){
+		return getUserInfoSP().getBoolean(IN_GEOFENCE, false);
+	}
+	
+	private static void setState(boolean isIn){
+		getUserInfoSP().edit().putBoolean(IN_GEOFENCE, isIn);
+	}
+	
+	/**
+	 * 是否在电子围栏中
+	 * @param distance
+	 * @return
+	 */
+	public static boolean isStateChange(double distance){
+		if(getPresState()){
+			//如果上个状态是在围栏里
+			if(distance <= getRadius()){
+				//此时依然在围栏里，状态没变
+				setState(true);
+				return false;
+			}else{
+				//此时在围栏为，状态改变
+				setState(false);
+				return true;
+			}
+		}else{
+			//如果上个状态是在围栏外
+			if(distance <= getRadius()){
+				//此时在围栏里，状态改变
+				setState(true);
+				return true;
+			}else{
+				//此时在围栏外，状态没变
+				setState(false);
+				return false;
+			}
+		}
 	}
 }

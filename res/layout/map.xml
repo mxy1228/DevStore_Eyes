@@ -18,7 +18,7 @@
         android:layout_margin="@dimen/padding"
         android:padding="@dimen/padding"
         android:gravity="center_vertical"
-        android:background="#66464646">
+        android:background="#6608406c">
         
         <EditText 
             android:id="@+id/main_et"
@@ -26,6 +26,7 @@
             android:layout_weight="1.0"
             android:layout_height="match_parent"
             android:imeOptions="actionSearch"
+            android:textColor="#FFFFFF"
             android:singleLine="true"/>
         
         
@@ -39,11 +40,12 @@
             android:scaleType="fitCenter"/>
     </LinearLayout>
     
-    
+    <!--  
     <Button
         android:id="@+id/testBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="TEST"/>
+    -->
 </RelativeLayout>

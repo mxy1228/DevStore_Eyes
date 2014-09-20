@@ -1,5 +1,7 @@
 package com.xmy.eyes;
 
+import java.text.SimpleDateFormat;
+
 import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONObject;
 
@@ -8,6 +10,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.Time;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import cn.bmob.push.PushConstants;
@@ -17,6 +20,7 @@ import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.xmy.eyes.bean.GeofenceBean;
+import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.bean.ReqBindJsonBean;
 import com.xmy.eyes.bean.ReqBindResultJsonBean;
 import com.xmy.eyes.bean.RequestLocateResultBean;
@@ -24,7 +28,6 @@ import com.xmy.eyes.bean.SetGeofenceResultBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 import com.xmy.eyes.util.JSONUtil;
-import com.xmy.eyes.view.MainActivity;
 
 import de.greenrobot.event.EventBus;
 
@@ -56,7 +59,6 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 				GeofenceBean geofenceBean = JSONUtil.getMapper().readValue(content, new TypeReference<GeofenceBean>() {
 				});
 				EventBus.getDefault().post(geofenceBean);
-				showNotification(geofenceBean);
 				break;
 			//普通消息
 			case PushMessageContants.MSG_TYPE_NORMAL:
@@ -102,6 +104,12 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 				});
 				EventBus.getDefault().post(locateResultBean);
 				break;
+			//围栏状态改变
+			case PushMessageContants.MSG_GEOFENCE_STATE_CHANGE:
+				GeofenceStateChangeBean stateChangeBean = JSONUtil.getMapper().readValue(content, new TypeReference<GeofenceStateChangeBean>() {
+				});
+				showNotification(stateChangeBean);
+				break;
 			default:
 				break;
 			}
@@ -111,13 +119,23 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 		
 	}
 	
-	private void showNotification(GeofenceBean bean){
+	/**
+	 * 通知栏提示
+	 * @param bean
+	 */
+	private void showNotification(GeofenceStateChangeBean bean){
 		NotificationManager manager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notif = new Notification(R.drawable.search_btn, bean.isIn() ? "进入围栏" : "离开围栏", 0);
+		Notification notif = new Notification();
+		notif.icon = R.drawable.bd_point;
+		notif.tickerText = bean.isIn() ? "进入围栏":"离开围栏";
+		notif.when = System.currentTimeMillis();
 		RemoteViews view = new RemoteViews(mContext.getPackageName(), R.layout.notifacation_view);
-		view.setTextViewText(R.id.notification_view_tv, bean.isIn() ? "进入围栏" : "离开围栏");
+		view.setTextViewText(R.id.notification_view_tv, bean.isIn() ? bean.getUserName()+"进入围栏" : bean.getUserName()+"离开围栏");
+		SimpleDateFormat formater = new SimpleDateFormat("MM月dd日 HH:mm:ss");
+		view.setTextViewText(R.id.notification_time_tv, formater.format(System.currentTimeMillis()));
 		notif.contentView = view;
 		notif.flags = Notification.FLAG_NO_CLEAR;
+		notif.defaults = Notification.DEFAULT_VIBRATE;
 		manager.notify(1, notif);
 	}
 	

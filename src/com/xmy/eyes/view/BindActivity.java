@@ -10,6 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -32,6 +34,8 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	private Button mWaitBnt;
 	private Button mSetBtn;
 	private TextView mWaitTV;
+	private ImageButton mSearchIBtn;
+	private LinearLayout mBindETLL;
 	
 	private IBindPresenter mPresenter;
 	private MyUser mMyUser;
@@ -52,6 +56,8 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 		this.mSetBtn = (Button)findViewById(R.id.bind_set_geofence_btn);
 		this.mWaitBnt = (Button)findViewById(R.id.bind_wait_btn);
 		this.mWaitTV = (TextView)findViewById(R.id.bind_wait_tv);
+		this.mSearchIBtn = (ImageButton)findViewById(R.id.bind_search_ibtn);
+		this.mBindETLL = (LinearLayout)findViewById(R.id.bind_et_ll);
 	}
 
 	@Override
@@ -76,6 +82,7 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 		});
 		this.mWaitBnt.setOnClickListener(this);
 		this.mSetBtn.setOnClickListener(this);
+		this.mSearchIBtn.setOnClickListener(this);
 	}
 
 
@@ -87,7 +94,7 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 		if(user != null){
 			if(user.getBindedUID() == null){
 				//搜索到的用户还没和任何人绑定
-				new AlertDialog.Builder(BindActivity.this).setMessage("要和"+user.getUsername()+"绑定吗？")
+				new AlertDialog.Builder(BindActivity.this).setMessage(getString(R.string.confirm_bind, user.getUsername()))
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					
 					@Override
@@ -104,11 +111,12 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 				}).show();
 			}else{
 				//搜索到的用户已经和别人绑定过了
-				showToast(user.getUsername()+"已经和别人绑定");
+				showToast(getString(R.string.had_bind, user.getUsername()));
 			}
 			
 		}else{
 			//没搜索到用户
+			showToast(R.string.no_user);
 		}
 	}
 
@@ -134,7 +142,7 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bind_set_geofence_btn:
-			mET.setVisibility(View.VISIBLE);
+			mBindETLL.setVisibility(View.VISIBLE);
 			mWaitBnt.setVisibility(View.GONE);
 			mSetBtn.setVisibility(View.GONE);
 			break;
@@ -142,6 +150,12 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 			mSetBtn.setVisibility(View.GONE);
 			mWaitBnt.setVisibility(View.GONE);
 			mWaitTV.setVisibility(View.VISIBLE);
+			break;
+		case R.id.bind_search_ibtn:
+			String userName = mET.getText().toString();
+			if(userName != null && !userName.isEmpty()){
+				mPresenter.search(BindActivity.this, userName);
+			}
 			break;
 		default:
 			break;

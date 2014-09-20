@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="btn_bg_normal">#660269A7</drawable>
+    <drawable name="btn_bg_press">#660A507E</drawable>
+    <color name="bg">#E4E4E5</color>
+</resources>
