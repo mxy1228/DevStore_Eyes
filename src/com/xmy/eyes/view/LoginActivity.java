@@ -47,6 +47,7 @@ public class LoginActivity extends BaseActivity implements ILoginHandler,OnClick
 	 */
 	@Override
 	public void onSuccessRegistOnBmob(MyUser user) {
+		dissmisWaitingDialog();
 		EyesApplication.mMyUser = user;
 		Intent intent = new Intent();
 		intent.putExtra("user", user);
@@ -71,6 +72,7 @@ public class LoginActivity extends BaseActivity implements ILoginHandler,OnClick
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.login_btn:
+			showWaitingDialog();
 			this.mPresenter.baiduLogin(this);
 			break;
 

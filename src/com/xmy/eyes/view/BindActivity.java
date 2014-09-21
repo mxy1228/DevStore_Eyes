@@ -21,6 +21,7 @@ import com.xmy.eyes.R;
 import com.xmy.eyes.bean.MyUser;
 import com.xmy.eyes.bean.ReqBindJsonBean;
 import com.xmy.eyes.bean.ReqBindResultJsonBean;
+import com.xmy.eyes.bean.StartGeoFenceSuccessBean;
 import com.xmy.eyes.impl.IBindHandler;
 import com.xmy.eyes.presenter.BmobPushMsgPresenter;
 import com.xmy.eyes.presenter.IBindPresenter;
@@ -126,14 +127,22 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	 */
 	@Override
 	public void onBind(boolean result) {
+		dissmisWaitingDialog();
+		showToast(getString(R.string.success_bind, EyesApplication.mMyUser.getBind()));
 		if(result){
 			//绑定成功
-			Intent intent = new Intent(BindActivity.this,MapActivity.class);
-			startActivity(intent);
-			BindActivity.this.finish();
+			if(EyesApplication.mMyUser.getIsFenced()){
+				//如果是被设置围栏的一方则停留在该页面，等待被设置电子围栏
+				mWaitTV.setText(R.string.wait_for_geofence);
+			}else{
+				//如果是主动设置围栏的一方则跳转到地图页，设置电子围栏
+				Intent intent = new Intent(BindActivity.this,MapActivity.class);
+				startActivity(intent);
+				BindActivity.this.finish();
+			}
 		}else{
 			//绑定失败
-			
+			showToast(R.string.bind_failed);
 		}
 	}
 
@@ -178,6 +187,8 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				result.setAgree(true);
+				showWaitingDialog();
+				EyesApplication.mMyUser.setIsFenced(true);
 				mPresenter.bind(bean.getReqUserName(),bean.getReqUid(), BindActivity.this);
 				BmobPushMsgPresenter.getDefault().sendMessage(JSONUtil.convertObjToJsonObject(result),bean.getReqUid());
 			}
@@ -197,9 +208,22 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	 */
 	public void onEventMainThread(ReqBindResultJsonBean bean){
 		if(bean.isAgree()){
+			showToast(getString(R.string.ta_agree_bind, bean.getTaUserName()));
+			EyesApplication.mMyUser.setIsFenced(false);
 			mPresenter.bind(bean.getTaUserName(),bean.getTaUid(), BindActivity.this);
 		}else{
 			//TODO
 		}
+	}
+	
+	/**
+	 * 成功启动电子围栏
+	 * @param bean
+	 */
+	public void onEventMainThread(StartGeoFenceSuccessBean bean){
+		Intent intent = new Intent(BindActivity.this,MainActivity.class);
+		startActivity(intent);
+		BindActivity.this.finish();
+		EventBus.getDefault().unregister(this);
 	}
 }

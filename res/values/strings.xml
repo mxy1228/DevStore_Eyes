@@ -24,4 +24,9 @@
 	<string name="modify_geofence">修改围栏</string>
 	<string name="searching">正在查询...</string>
 	<string name="locating">正在定位...</string>
+	<string name="ta_agree_bind">%1$s同意和您绑定</string>
+	<string name="bind_failed">绑定失败</string>
+	<string name="success_bind">成功和%1$s绑定</string>
+	<string name="wait_for_geofence">对方正在设置围栏，请稍后...</string>
+	<string name="set_geofence_success">给对方设置电子围栏成功</string>
 </resources>

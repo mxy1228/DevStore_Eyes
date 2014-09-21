@@ -52,4 +52,8 @@ public interface IMainHandler {
 	 */
 	public void onGeofenceStateChanged(GeofenceStateChangeBean bean);
 	
+	/**
+	 * 成功设置并启动电子围栏
+	 */
+	public void setAndStartGeoFenceSuccess();
 }

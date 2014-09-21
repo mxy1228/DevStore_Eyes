@@ -111,7 +111,6 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	protected void initEvent() {
 		this.mSearchIBtn.setOnClickListener(this);
 		this.mET.setOnEditorActionListener(this);
-//		this.mTestBtn.setOnClickListener(this);
 	}
 	
 	@Override
@@ -138,7 +137,6 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	@Override
 	public void onSuccessAddBDGeofences() {
 		dissmisWaitingDialog();
-		showToast("电子围栏设置成功");
 	}
 
 	/**
@@ -295,7 +293,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	public void onEventMainThread(SetGeofenceResultBean bean){
 		dissmisWaitingDialog();
 		if(bean.isResult()){
-			showDebugToast("给对方设置电子围栏成功");
+			showDebugToast(R.string.set_geofence_success);
 			mPresenter.saveGeoFenceInfo(MapActivity.this, bean);
 		}
 	}
@@ -330,6 +328,12 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 
 	@Override
 	public void onGeofenceStateChanged(GeofenceStateChangeBean bean) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAndStartGeoFenceSuccess() {
 		// TODO Auto-generated method stub
 		
 	}

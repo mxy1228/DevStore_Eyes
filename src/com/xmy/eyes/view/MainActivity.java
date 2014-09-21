@@ -18,6 +18,7 @@ import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.R;
 import com.xmy.eyes.bean.GeofenceBean;
 import com.xmy.eyes.bean.GeofenceStateChangeBean;
+import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 import com.xmy.eyes.presenter.NotificationPresenter;
@@ -137,6 +138,10 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void onEventMainThread(RequestLocateResultBean bean){
+		this.mDistanceTV.setText(getString(R.string.current_distance, "",Double.valueOf(bean.getDistance()).intValue()+""));
+	}
 
 	@Override
 	public void onLocated(BDLocation location, double distance) {
@@ -157,6 +162,12 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 	@Override
 	public void onGeofenceStateChanged(GeofenceStateChangeBean bean) {
 		new NotificationPresenter().showNotification(bean, MainActivity.this);
+	}
+
+	@Override
+	public void setAndStartGeoFenceSuccess() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

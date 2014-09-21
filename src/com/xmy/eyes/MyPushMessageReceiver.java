@@ -170,6 +170,13 @@ public class MyPushMessageReceiver extends BroadcastReceiver {
 			
 		}
 
+
+		@Override
+		public void setAndStartGeoFenceSuccess() {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 

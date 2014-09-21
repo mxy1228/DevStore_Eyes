@@ -14,7 +14,6 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeOption;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
@@ -38,9 +37,12 @@ import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.bean.RequestLocateBean;
 import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.bean.SetGeofenceResultBean;
+import com.xmy.eyes.bean.StartGeoFenceSuccessBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.util.SPUtil;
 import com.xmy.eyes.view.MainActivity;
+
+import de.greenrobot.event.EventBus;
 
 public class IMainPresenter{
 
@@ -101,6 +103,7 @@ public class IMainPresenter{
 				public void onSuccess() {
 					ELog.d("setAndStartBDGeofence:onSuccess");
 					SPUtil.saveGeofence(lng, lat, radius);
+					EventBus.getDefault().post(new StartGeoFenceSuccessBean());
 				}
 				
 				@Override
