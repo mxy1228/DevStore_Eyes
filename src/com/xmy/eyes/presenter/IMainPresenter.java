@@ -14,6 +14,12 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
@@ -155,6 +161,7 @@ public class IMainPresenter{
 						stateChangeBean.setDistance(distance);
 						stateChangeBean.setUserName(EyesApplication.mMyUser.getUsername());
 						BmobPushMsgPresenter.getDefault().sendMessage(stateChangeBean, EyesApplication.mMyUser.getBindedUID());
+						mHandler.onGeofenceStateChanged(stateChangeBean);
 					}
 				}else{
 					mHandler.onLocated(arg0, 0);
@@ -265,5 +272,28 @@ public class IMainPresenter{
 				ELog.e("saveGeoFenceInfo:onFailure"+":"+arg0+":"+arg1);
 			}
 		});
+	}
+	
+	/**
+	 * 反向地理编码查询
+	 */
+	public void getGeoCode(double lat,double lon){
+		GeoCoder search = GeoCoder.newInstance();
+		search.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
+			
+			@Override
+			public void onGetReverseGeoCodeResult(ReverseGeoCodeResult arg0) {
+				//反向地理编码查询结果
+				mHandler.onGeoCodeResult(arg0);
+			}
+			
+			@Override
+			public void onGetGeoCodeResult(GeoCodeResult arg0) {
+				//正向地理编码查询结果
+				
+			}
+		});
+		search.reverseGeoCode(new ReverseGeoCodeOption().location(new LatLng(lat, lon)));
+		
 	}
 }

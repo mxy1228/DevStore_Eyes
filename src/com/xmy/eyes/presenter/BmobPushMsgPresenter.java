@@ -2,7 +2,6 @@ package com.xmy.eyes.presenter;
 
 import org.json.JSONObject;
 
-import cn.bmob.push.BmobPush;
 import cn.bmob.v3.BmobInstallation;
 import cn.bmob.v3.BmobQuery;
 

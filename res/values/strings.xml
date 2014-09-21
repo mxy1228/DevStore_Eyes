@@ -16,4 +16,12 @@
 	<string name="no_user">该用户还未注册DevstoreEye</string>
 	<string name="had_bind">%1$s已经和别人绑定啦</string>
 	<string name="confirm_bind">确定要和%1$s绑定吗？</string>
+	<string name="current_bind_user">当前绑定用户：%1$s</string>
+	<string name="geofence_center">围栏中心：%1$s</string>
+	<string name="current_radius">围栏半径：%1$s</string>
+	<string name="current_distance">%1$s当前距离围栏中心%2$s米</string>
+	<string name="geofence_hint">因定位服务存在误差，当前距离只做参考。</string>
+	<string name="modify_geofence">修改围栏</string>
+	<string name="searching">正在查询...</string>
+	<string name="locating">正在定位...</string>
 </resources>

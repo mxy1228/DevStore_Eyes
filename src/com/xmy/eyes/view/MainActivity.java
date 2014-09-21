@@ -10,23 +10,28 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.R;
 import com.xmy.eyes.bean.GeofenceBean;
+import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
+import com.xmy.eyes.presenter.NotificationPresenter;
 import com.xmy.eyes.util.SPUtil;
 
 import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity implements OnClickListener,IMainHandler{
 
-	private TextView mTV;
 	private Button mBtn;
-	private TextView mCurTV;
+	private TextView mGeofenceTV;
+	private TextView mBindTV;
+	private TextView mRadiusTV;
+	private TextView mDistanceTV;
 	
 	private IMainPresenter mPresenter;
 	private SharedPreferences mSp;
@@ -42,25 +47,19 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 	
 	@Override
 	protected void initView() {
-		this.mTV = (TextView)findViewById(R.id.main_geofence_tv);
 		this.mBtn = (Button)findViewById(R.id.main_btn);
-		this.mCurTV = (TextView)findViewById(R.id.main_cur_tv);
+		this.mGeofenceTV = (TextView)findViewById(R.id.main_geofence_tv);
+		this.mBindTV = (TextView)findViewById(R.id.main_bind_tv);
+		this.mRadiusTV = (TextView)findViewById(R.id.main_radius_tv);
+		this.mDistanceTV = (TextView)findViewById(R.id.main_distance_tv);
 		this.mBtn.setVisibility(EyesApplication.mMyUser.getIsFenced() ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
 	protected void initData() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("当前用户："+EyesApplication.mMyUser.getUsername());
-		sb.append("\n");
-		sb.append("绑定用户："+EyesApplication.mMyUser.getBind());
-		sb.append("\n");
-		sb.append("围栏lat="+EyesApplication.mMyUser.getLat()+":lng="+EyesApplication.mMyUser.getLng());
-		sb.append("\n");
-		sb.append("半径："+EyesApplication.mMyUser.getRadius());
-		this.mTV.setText(sb.toString());
-		EventBus.getDefault().register(this);
 		this.mPresenter = new IMainPresenter(this);
+		initTVData();
+		EventBus.getDefault().register(this);
 		//如果用户已经有经纬度及半径的属性并且是被设置围栏的一方，则直接开启围栏
 		if(EyesApplication.mMyUser.getRadius() != null && EyesApplication.mMyUser.getIsFenced()){
 			this.mPresenter.setAndStartBDGeofence(this
@@ -79,17 +78,17 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 					String key) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("当前用户："+EyesApplication.mMyUser.getUsername());
-				sb.append("\n");
-				sb.append("绑定用户："+EyesApplication.mMyUser.getBind());
-				sb.append("\n");
-				sb.append("围栏lat="+SPUtil.getGeofence().latitude+":lng="+SPUtil.getGeofence().longitude);
-				sb.append("\n");
-				sb.append("半径："+SPUtil.getRadius());
-				mTV.setText(sb.toString());
+				initTVData();
 			}
 		});
+	}
+	
+	private void initTVData(){
+		this.mBindTV.setText(getString(R.string.current_bind_user, EyesApplication.mMyUser.getBind()));
+		this.mRadiusTV.setText(getString(R.string.current_radius, EyesApplication.mMyUser.getRadius()));
+		this.mGeofenceTV.setText(getString(R.string.geofence_center,getString(R.string.searching)));
+		this.mDistanceTV.setText(R.string.locating);
+		mPresenter.getGeoCode(Double.valueOf(EyesApplication.mMyUser.getLat()), Double.valueOf(EyesApplication.mMyUser.getLng()));
 	}
 
 	@Override
@@ -111,14 +110,7 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 	 * @param bean
 	 */
 	public void onEventMainThread(GeofenceBean bean){
-		StringBuilder sb = new StringBuilder();
-		sb.append("===============");
-		sb.append("\n");
-		sb.append("Current lat="+bean.getLat()+":lng="+bean.getLng());
-		sb.append("\n");
-		sb.append("距离："+bean.getDistance());
-		sb.append("\n");
-		mCurTV.setText(sb.toString());
+		this.mDistanceTV.setText(getString(R.string.current_distance, EyesApplication.mMyUser.getBind(),bean.getDistance()));
 	}
 
 	@Override
@@ -148,14 +140,23 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 
 	@Override
 	public void onLocated(BDLocation location, double distance) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("===============");
-		sb.append("\n");
-		sb.append("Current lat="+location.getLatitude()+":lng="+location.getLongitude());
-		sb.append("\n");
-		sb.append("距离："+distance);
-		sb.append("\n");
-		mCurTV.setText(sb.toString());
+		this.mDistanceTV.setText(getString(R.string.current_distance, "",Double.valueOf(distance).intValue()+""));
+	}
+
+	/**
+	 * 反向地理编码查询结果
+	 */
+	@Override
+	public void onGeoCodeResult(ReverseGeoCodeResult result) {
+		this.mGeofenceTV.setText(getString(R.string.geofence_center,result.getAddress()));
+	}
+
+	/**
+	 * 相对围栏位置状态改变
+	 */
+	@Override
+	public void onGeofenceStateChanged(GeofenceStateChangeBean bean) {
+		new NotificationPresenter().showNotification(bean, MainActivity.this);
 	}
 	
 }

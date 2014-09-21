@@ -1,9 +1,11 @@
 package com.xmy.eyes.impl;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.xmy.eyes.bean.GeofenceStateChangeBean;
 
 public interface IMainHandler {
 
@@ -38,5 +40,16 @@ public interface IMainHandler {
 	 */
 	public void onPOISeach(PoiResult result);
 	
+	/**
+	 * 反向地理编码查询结果
+	 * @param result
+	 */
+	public void onGeoCodeResult(ReverseGeoCodeResult result);
+	
+	/**
+	 * 相对地理围栏的位置有改变
+	 * @param bean
+	 */
+	public void onGeofenceStateChanged(GeofenceStateChangeBean bean);
 	
 }

@@ -6,6 +6,7 @@ public class GeofenceStateChangeBean {
 	private String userName;
 	private double distance;
 	private boolean isIn;
+	private boolean isChanged;
 	public int getType() {
 		return type;
 	}
@@ -29,6 +30,12 @@ public class GeofenceStateChangeBean {
 	}
 	public void setDistance(double distance) {
 		this.distance = distance;
+	}
+	public boolean isChanged() {
+		return isChanged;
+	}
+	public void setChanged(boolean isChanged) {
+		this.isChanged = isChanged;
 	}
 	
 	

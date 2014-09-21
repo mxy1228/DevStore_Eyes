@@ -2,22 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@color/bg">
     
 	<TextView
-	    android:id="@+id/main_geofence_tv"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:id="@+id/main_bind_tv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:padding="10.0dip"
+	    style="@style/tv"/>
 	
 	<TextView
-	    android:id="@+id/main_cur_tv"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:id="@+id/main_geofence_tv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:padding="10.0dip"
+	    android:layout_marginTop="5.0dip"
+	    style="@style/tv"/>
+	
+	<TextView
+	    android:id="@+id/main_radius_tv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:padding="10.0dip"
+	    android:layout_marginTop="5.0dip"
+	    style="@style/tv"/>
+	
+	<TextView
+	    android:id="@+id/main_distance_tv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:padding="10.0dip"
+	    android:layout_marginTop="5.0dip"
+	    style="@style/tv"/>
+	
+	
+	<TextView
+	    android:id="@+id/main_hint_tv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/geofence_hint"
+	    android:gravity="right"
+	    style="@style/tv"
+	    android:textSize="13sp"
+	    android:textStyle="italic"/>
+	
 	
 	<Button
 	    android:id="@+id/main_btn"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:text="修改围栏"/>
+	    android:layout_marginTop="5.0dip"
+	    android:text="@string/modify_geofence"
+	    style="@style/btn"/>
     
 </LinearLayout>

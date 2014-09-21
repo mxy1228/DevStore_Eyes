@@ -10,13 +10,10 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import cn.bmob.v3.BmobInstallation;
-import cn.bmob.v3.BmobQuery;
 
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
@@ -33,6 +30,7 @@ import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.overlayutil.PoiOverlay;
 import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
@@ -41,6 +39,7 @@ import com.baidu.mapapi.utils.DistanceUtil;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.R;
+import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.bean.SetGeofenceResultBean;
 import com.xmy.eyes.impl.IMainHandler;
@@ -147,7 +146,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	 */
 	@Override
 	public void onLocated(BDLocation location, double distance) {
-		
+		this.mCurrentCity = location.getCity();
 	}
 
 	@Override
@@ -319,6 +318,20 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 		LatLng geofence = new LatLng(Double.valueOf(EyesApplication.mMyUser.getLat()), Double.valueOf(EyesApplication.mMyUser.getLng()));
 		double distance = DistanceUtil.getDistance(location, geofence);
 		ELog.v("distance = "+distance);
+	}
+
+	/**
+	 * 反向地理编码查询结果
+	 */
+	@Override
+	public void onGeoCodeResult(ReverseGeoCodeResult result) {
+		
+	}
+
+	@Override
+	public void onGeofenceStateChanged(GeofenceStateChangeBean bean) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

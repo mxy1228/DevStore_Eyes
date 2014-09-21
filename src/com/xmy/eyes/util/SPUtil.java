@@ -113,7 +113,7 @@ public class SPUtil {
 	}
 	
 	private static void setState(boolean isIn){
-		getUserInfoSP().edit().putBoolean(IN_GEOFENCE, isIn);
+		getUserInfoSP().edit().putBoolean(IN_GEOFENCE, isIn).commit();
 	}
 	
 	/**

@@ -8,10 +8,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.xmy.eyes.R;
+import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.impl.IMainHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 
@@ -84,6 +86,18 @@ public class TestActivity extends BaseActivity implements IMainHandler{
 
 	@Override
 	public void onLocated(BDLocation location, double distance) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGeoCodeResult(ReverseGeoCodeResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGeofenceStateChanged(GeofenceStateChangeBean bean) {
 		// TODO Auto-generated method stub
 		
 	}
