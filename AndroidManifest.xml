@@ -86,6 +86,21 @@
             android:name="com.amap.api.v2.apikey"
             android:value="2c148b59ff59671bd69fd68b70a1a44a"/>
         <service android:name=".service.GeoFenceService"></service>
+        
+        <activity
+		   android:name="cn.sharesdk.framework.ShareSDKUIShell"
+		   android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		   android:configChanges="keyboardHidden|orientation|screenSize"
+		   android:screenOrientation="portrait"
+		   android:windowSoftInputMode="stateHidden|adjustResize" />
+		<!--易信分享回调 -->
+		<activity
+		  android:name=".yxapi.YXEntryActivity"
+		  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		  android:configChanges="keyboardHidden|orientation|screenSize"
+		  android:exported="true"
+		  android:screenOrientation="portrait" />
+		
     </application>
 
     <permission android:protectionLevel="normal" android:name="cn.bmob.permission.push"></permission>

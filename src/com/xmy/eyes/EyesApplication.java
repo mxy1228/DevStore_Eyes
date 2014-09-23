@@ -5,6 +5,7 @@ import android.content.Context;
 import cn.bmob.push.BmobPush;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobPushManager;
+import cn.sharesdk.framework.ShareSDK;
 
 import com.amap.api.location.LocationManagerProxy;
 import com.baidu.api.Baidu;
@@ -31,6 +32,8 @@ public class EyesApplication extends Application {
 	public static BmobPushManager mBmobPushManager;
 	//¸ßµÂµØÍ¼
 	public static LocationManagerProxy mGaodeManager;
+	//ShareSDK
+	public static ShareSDK mShareSDK;
 	
 	@Override
 	public void onCreate() {
@@ -47,5 +50,6 @@ public class EyesApplication extends Application {
 		mBmobPushManager = new BmobPushManager(getApplicationContext());
 		BmobPush.startWork(getApplicationContext(), Contants.BMOB_APP_ID);
 		mGaodeManager = LocationManagerProxy.getInstance(this);
+		ShareSDK.initSDK(this, "32c8661cc2ae");
 	}
 }

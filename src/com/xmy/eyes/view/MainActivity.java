@@ -20,21 +20,25 @@ import com.xmy.eyes.bean.GeofenceBean;
 import com.xmy.eyes.bean.GeofenceStateChangeBean;
 import com.xmy.eyes.bean.RequestLocateResultBean;
 import com.xmy.eyes.impl.IMainHandler;
+import com.xmy.eyes.impl.IShareHandler;
 import com.xmy.eyes.presenter.IMainPresenter;
 import com.xmy.eyes.presenter.NotificationPresenter;
+import com.xmy.eyes.presenter.SharePresenter;
 import com.xmy.eyes.util.SPUtil;
 
 import de.greenrobot.event.EventBus;
 
-public class MainActivity extends BaseActivity implements OnClickListener,IMainHandler{
+public class MainActivity extends BaseActivity implements OnClickListener,IMainHandler,IShareHandler{
 
 	private Button mBtn;
 	private TextView mGeofenceTV;
 	private TextView mBindTV;
 	private TextView mRadiusTV;
 	private TextView mDistanceTV;
+	private Button mShareBtn;
 	
 	private IMainPresenter mPresenter;
+	private SharePresenter mSharePresenter;
 	private SharedPreferences mSp;
 	
 	@Override
@@ -54,11 +58,13 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 		this.mRadiusTV = (TextView)findViewById(R.id.main_radius_tv);
 		this.mDistanceTV = (TextView)findViewById(R.id.main_distance_tv);
 		this.mBtn.setVisibility(EyesApplication.mMyUser.getIsFenced() ? View.GONE : View.VISIBLE);
+		this.mShareBtn = (Button)findViewById(R.id.main_share_btn);
 	}
 
 	@Override
 	protected void initData() {
 		this.mPresenter = new IMainPresenter(this);
+		this.mSharePresenter = new SharePresenter(this);
 		initTVData();
 		EventBus.getDefault().register(this);
 		//如果用户已经有经纬度及半径的属性并且是被设置围栏的一方，则直接开启围栏
@@ -82,6 +88,7 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 				initTVData();
 			}
 		});
+		this.mShareBtn.setOnClickListener(this);
 	}
 	
 	private void initTVData(){
@@ -100,7 +107,9 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 			startActivity(intent);
 			MainActivity.this.finish();
 			break;
-
+		case R.id.main_share_btn:
+			mSharePresenter.share(MainActivity.this);
+			break;
 		default:
 			break;
 		}
@@ -168,6 +177,14 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 	public void setAndStartGeoFenceSuccess() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * 分享成功
+	 */
+	@Override
+	public void onSharedSuccess() {
+		showToast(R.string.share_success);
 	}
 	
 }
