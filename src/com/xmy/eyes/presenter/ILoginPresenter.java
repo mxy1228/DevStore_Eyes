@@ -18,6 +18,7 @@ import com.baidu.api.BaiduDialogError;
 import com.baidu.api.BaiduException;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
+import com.umeng.update.UmengUpdateAgent;
 import com.xmy.eyes.Contants;
 import com.xmy.eyes.ELog;
 import com.xmy.eyes.EyesApplication;
@@ -261,5 +262,15 @@ public class ILoginPresenter {
 				ELog.e("registPushInfoOnBmob:onFailure:"+arg0+":"+arg1);
 			}
 		});
+	}
+	
+	/**
+	 * ¼ì²é¸üÐÂ
+	 * @param ctx
+	 */
+	public void checkUpdate(Context ctx){
+		UmengUpdateAgent.update(ctx);
+		UmengUpdateAgent.setUpdateOnlyWifi(false);
+		
 	}
 }

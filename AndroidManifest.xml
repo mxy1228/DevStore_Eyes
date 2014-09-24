@@ -100,7 +100,16 @@
 		  android:configChanges="keyboardHidden|orientation|screenSize"
 		  android:exported="true"
 		  android:screenOrientation="portrait" />
-		
+		<service
+		    android:name="com.umeng.update.net.DownloadingService"
+		    android:process=":DownloadingService" >
+		</service>
+		<activity 
+		    android:name="com.umeng.update.UpdateDialogActivity"
+		    android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+		</activity>
+		<meta-data android:value="5422ae2efd98c55a6a006476" android:name="UMENG_APPKEY"/>
+		<meta-data android:value="1" android:name="UMENG_CHANNEL"/>
     </application>
 
     <permission android:protectionLevel="normal" android:name="cn.bmob.permission.push"></permission>

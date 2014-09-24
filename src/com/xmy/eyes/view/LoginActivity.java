@@ -35,6 +35,7 @@ public class LoginActivity extends BaseActivity implements ILoginHandler,OnClick
 	@Override
 	protected void initData() {
 		this.mPresenter = new ILoginPresenter(this);
+		this.mPresenter.checkUpdate(this);
 	}
 
 	@Override
