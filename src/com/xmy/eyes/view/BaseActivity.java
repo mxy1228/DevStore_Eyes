@@ -1,11 +1,13 @@
 package com.xmy.eyes.view;
 
+import junit.framework.Test;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.testin.agent.TestinAgent;
 import com.xmy.eyes.Config;
 import com.xmy.eyes.R;
 import com.xmy.eyes.widget.WaitingDialog;
@@ -67,6 +69,18 @@ public abstract class BaseActivity extends FragmentActivity {
 	
 	protected void dissmisWaitingDialog(){
 		this.mWaitingDialog.dismiss();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TestinAgent.onResume(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		TestinAgent.onStop(this);
 	}
 	
 }

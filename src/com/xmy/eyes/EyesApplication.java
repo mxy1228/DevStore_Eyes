@@ -9,12 +9,13 @@ import cn.sharesdk.framework.ShareSDK;
 
 import com.amap.api.location.LocationManagerProxy;
 import com.baidu.api.Baidu;
+import com.baidu.frontia.FrontiaApplication;
 import com.baidu.location.GeofenceClient;
 import com.baidu.mapapi.SDKInitializer;
 import com.tencent.tauth.Tencent;
 import com.xiaomi.infra.galaxy.android.GalaxyOAuthClient;
 import com.xmy.eyes.bean.MyUser;
-public class EyesApplication extends Application {
+public class EyesApplication extends FrontiaApplication {
 	
 	
 	public static Context mContext;
@@ -23,9 +24,9 @@ public class EyesApplication extends Application {
 	//百度地图地理围栏服务
 	public static GeofenceClient mGeofenceClient;
 	//Tencent是腾讯登录的主要实现类
-	public static Tencent mTencent;
+//	public static Tencent mTencent;
 	//小米云存储主要实现类
-	public static GalaxyOAuthClient mMiClient;
+//	public static GalaxyOAuthClient mMiClient;
 	//百度
 	public static Baidu mBaidu;
 	//Bmob推送
@@ -42,14 +43,15 @@ public class EyesApplication extends Application {
 		mGeofenceClient = new GeofenceClient(getApplicationContext());
 		mGeofenceClient.setInterval(Contants.GEOFENCE_INTERVAL);//设置电子围栏提醒的时间间隔
 		SDKInitializer.initialize(getApplicationContext());
-		mTencent = Tencent.createInstance("1102488799", getApplicationContext());
-		mMiClient = GalaxyOAuthClient.createInstance(Contants.MI_APP_ID);
+//		mTencent = Tencent.createInstance("1102488799", getApplicationContext());
+//		mMiClient = GalaxyOAuthClient.createInstance(Contants.MI_APP_ID);
 		//初始化Bmob
 		Bmob.initialize(getApplicationContext(), Contants.BMOB_APP_ID);
 		mBaidu = new Baidu(Contants.BAIDU_APPID, getApplicationContext());
 		mBmobPushManager = new BmobPushManager(getApplicationContext());
 		BmobPush.startWork(getApplicationContext(), Contants.BMOB_APP_ID);
 		mGaodeManager = LocationManagerProxy.getInstance(this);
-		ShareSDK.initSDK(this, "32c8661cc2ae");
+		ShareSDK.initSDK(this, Contants.SHARE_APP_KRY);
+		FrontiaApplication.initFrontiaApplication(this);
 	}
 }

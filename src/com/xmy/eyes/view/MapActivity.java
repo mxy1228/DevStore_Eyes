@@ -117,6 +117,7 @@ public class MapActivity extends BaseActivity implements IMainHandler,OnClickLis
 	protected void onDestroy() {
 		super.onDestroy();
 		mMapView.onDestroy();
+		EventBus.getDefault().unregister(this);
 	}
 	
 	@Override

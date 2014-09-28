@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.testin.agent.TestinAgent;
+import com.xmy.eyes.Contants;
 import com.xmy.eyes.EyesApplication;
 import com.xmy.eyes.R;
 import com.xmy.eyes.bean.MyUser;
@@ -36,6 +40,10 @@ public class LoginActivity extends BaseActivity implements ILoginHandler,OnClick
 	protected void initData() {
 		this.mPresenter = new ILoginPresenter(this);
 		this.mPresenter.checkUpdate(this);
+		//启动百度推送
+//		PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY, "Al8y2B0qikgt6viHQXAYbgZp");
+		//开启Testin云测，搜集崩溃信息
+		TestinAgent.init(this, Contants.TESTIN_APP_KEY);
 	}
 
 	@Override
@@ -55,8 +63,14 @@ public class LoginActivity extends BaseActivity implements ILoginHandler,OnClick
 		if(user.getBind() != null){
 			//已经成功绑定
 			if(user.getRadius() == null ){
-				//如果还没设置围栏，则跳转到MapActivity
-				intent.setClass(LoginActivity.this,MapActivity.class);
+				//如果还没设置围栏
+				if(EyesApplication.mMyUser.getIsFenced()){
+					//如果是被设置围栏的一方，则跳转到BindActivity，等待对方设置围栏
+					intent.setClass(LoginActivity.this, BindActivity.class);
+				}else{
+					//如果是主动设置的一方，则跳转到MapActivity
+					intent.setClass(LoginActivity.this,MapActivity.class);
+				}
 			}else{
 				//如果已经设置了围栏，则跳转到MainActivity
 				intent.setClass(LoginActivity.this, MainActivity.class);

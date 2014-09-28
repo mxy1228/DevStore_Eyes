@@ -6,7 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="ok">确定</string>
 	<string name="cancel">取消</string>
-	<string name="radius_title">请设置围栏半径(0~300米)</string>
+	<string name="radius_title">请设置围栏半径(0~500米)</string>
 	<string name="search_hint">请输要绑定的百度用户名</string>
 	<string name="set_geofence">我要给他/她设置电子围栏</string>
 	<string name="waite_for_geofence">等待设置电子围栏</string>
@@ -21,6 +21,7 @@
 	<string name="current_radius">围栏半径：%1$s</string>
 	<string name="current_distance">%1$s当前距离围栏中心%2$s米</string>
 	<string name="geofence_hint">因定位服务存在误差，当前距离只做参考。</string>
+	<string name="bind_hint">请输入对方的百度用户名进行绑定</string>
 	<string name="modify_geofence">修改围栏</string>
 	<string name="searching">正在查询...</string>
 	<string name="locating">正在定位...</string>
@@ -31,4 +32,5 @@
 	<string name="set_geofence_success">给对方设置电子围栏成功</string>
 	<string name="share">分享</string>
 	<string name="share_success">分享成功</string>
+	<string name="bind_set_hint">主动发送绑定请求的一方将获得设置电子围栏的权利</string>
 </resources>

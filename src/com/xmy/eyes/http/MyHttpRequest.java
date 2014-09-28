@@ -56,4 +56,29 @@ public class MyHttpRequest {
 			
 		});
 	}
+	
+	/**
+	 * 发送推送消息
+	 */
+	public void sendPushMessage(RequestParams params){
+		new MyHttpClient().post("http://channel.api.duapp.com/rest/2.0/channel/channel", params, new MyHttpHandler(){
+			
+			@Override
+			public void onStart() {
+				super.onStart();
+			}
+			
+			@Override
+			public void onSuccess(int statusCode, String content) {
+				super.onSuccess(statusCode, content);
+			}
+			
+			@Override
+			@Deprecated
+			public void onFailure(int statusCode, Throwable error,
+					String content) {
+				super.onFailure(statusCode,error, content);
+			}
+		});
+	}
 }

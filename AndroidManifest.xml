@@ -110,6 +110,48 @@
 		</activity>
 		<meta-data android:value="5422ae2efd98c55a6a006476" android:name="UMENG_APPKEY"/>
 		<meta-data android:value="1" android:name="UMENG_CHANNEL"/>
+		<receiver android:name=".receiver.PushMessageReceiver"
+		    android:enabled="true">
+		    <intent-filter >
+		        <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
+		        <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+		        <action android:name="com.baidu.android.pushservice.action.notification.CLICK"/>
+		    </intent-filter>
+		</receiver>
+
+		<receiver android:name="com.baidu.android.pushservice.PushServiceReceiver"
+            android:process=":bdservice_v1">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW" />
+                <action android:name="com.baidu.android.pushservice.action.media.CLICK" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.baidu.android.pushservice.RegistrationReceiver"
+            android:process=":bdservice_v1">
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.METHOD" />
+                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package" />
+            </intent-filter>                   
+        </receiver>
+        <service
+            android:name="com.baidu.android.pushservice.PushService"
+            android:exported="true"
+            android:process=":bdservice_v1"  >
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
+            </intent-filter>
+        </service>
+        <!-- push结束 -->
+        <meta-data android:name="api_key" android:value="Al8y2B0qikgt6viHQXAYbgZp" />
+        <!-- Testin云测 -->
+        <meta-data android:name="TESTIN_APPKEY" android:value="0fb27b816b32a877d4efec2f2dd10c31"/>
+        <meta-data android:name="TESTIN_CHANNEL" android:value="official"/>
     </application>
 
     <permission android:protectionLevel="normal" android:name="cn.bmob.permission.push"></permission>
@@ -137,4 +179,6 @@
 	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+	<uses-permission android:name="android.permission.GET_TASKS"/>
 </manifest>

@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity implements OnClickListener,IMainH
 		case R.id.main_btn:
 			Intent intent = new Intent(MainActivity.this,MapActivity.class);
 			startActivity(intent);
-			MainActivity.this.finish();
 			break;
 		case R.id.main_share_btn:
 			mSharePresenter.share(MainActivity.this);

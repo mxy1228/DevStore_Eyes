@@ -8,6 +8,10 @@ public class Contants {
 	
 	//小米结构化存储APPID
 	public static final String MI_APP_ID = "2882303761517253721";
+	//Testin云测APPKEY
+	public static final String TESTIN_APP_KEY = "0fb27b816b32a877d4efec2f2dd10c31";
+	// ShareSDK APPKEY
+	public static final String SHARE_APP_KRY = "32c8661cc2ae";
 	
 	//Bmob：列名：uid
 	public static final String BMOB_UID = "uid";
@@ -30,4 +34,5 @@ public class Contants {
 	public static final String BAIDU_API_KEY = "Al8y2B0qikgt6viHQXAYbgZp";
 	//电子围栏提醒的时间间隔
 	public static final int GEOFENCE_INTERVAL = 10 * 1000;
+	
 }

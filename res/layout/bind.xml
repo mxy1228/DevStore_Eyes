@@ -6,16 +6,15 @@
     android:orientation="vertical"
     android:background="@color/bg" >
     
-    <LinearLayout 
+    <LinearLayout
         android:id="@+id/bind_et_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingLeft="10.0dip"
         android:paddingRight="10.0dip"
-        android:visibility="gone"
         android:orientation="horizontal">
-        
+            
         <EditText 
 	        android:id="@+id/bind_username_et"
 	        android:layout_width="0.0dip"
@@ -37,11 +36,24 @@
         
     </LinearLayout>
 
+    
+    <TextView
+        android:id="@+id/bind_wait_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10.0dip"
+        android:layout_gravity="center"
+        android:background="#FFFFFF"
+        android:text="@string/waiting"
+        android:visibility="gone"
+        style="@style/tv"/>
+    
     <Button 
         android:id="@+id/bind_wait_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/waite_for_geofence"
+        android:visibility="gone"
         style="@style/btn"/>
     
     <Button
@@ -50,17 +62,8 @@
         android:layout_height="wrap_content"
         android:text="@string/set_geofence"
         android:layout_marginTop="10.0dip"
-        style="@style/btn"/>
-    
-    <TextView
-        android:id="@+id/bind_wait_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10.0dip"
-        android:layout_gravity="center"
         android:visibility="gone"
-        android:background="#FFFFFF"
-        android:text="@string/waiting"
-        style="@style/tv"/>
+        style="@style/btn"/>
+   
     
 </LinearLayout>

@@ -40,6 +40,7 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 	
 	private IBindPresenter mPresenter;
 	private MyUser mMyUser;
+	private boolean mShowSearchET;//是否显示搜索框
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -59,6 +60,29 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 		this.mWaitTV = (TextView)findViewById(R.id.bind_wait_tv);
 		this.mSearchIBtn = (ImageButton)findViewById(R.id.bind_search_ibtn);
 		this.mBindETLL = (LinearLayout)findViewById(R.id.bind_et_ll);
+		if(EyesApplication.mMyUser.getBind() != null){
+			//已经成功绑定
+			if(EyesApplication.mMyUser.getRadius() == null ){
+				//如果还没设置围栏
+				if(EyesApplication.mMyUser.getIsFenced()){
+					//如果是被设置围栏的一方则显示Waiting
+					this.mWaitTV.setVisibility(View.VISIBLE);
+					this.mSetBtn.setVisibility(View.GONE);
+					this.mWaitBnt.setVisibility(View.GONE);
+					this.mBindETLL.setVisibility(View.GONE);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 是否现在搜索框
+	 * @param show
+	 */
+	private void showSearchET(boolean show){
+		this.mBindETLL.setVisibility(show ? View.VISIBLE : View.GONE);
+		this.mSetBtn.setVisibility(show ? View.GONE : View.VISIBLE);
+		this.mWaitBnt.setVisibility(show ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
@@ -133,6 +157,10 @@ public class BindActivity extends BaseActivity implements IBindHandler,OnClickLi
 			//绑定成功
 			if(EyesApplication.mMyUser.getIsFenced()){
 				//如果是被设置围栏的一方则停留在该页面，等待被设置电子围栏
+				mWaitTV.setVisibility(View.VISIBLE);
+				mWaitBnt.setVisibility(View.GONE);
+				mSetBtn.setVisibility(View.GONE);
+				mBindETLL.setVisibility(View.GONE);
 				mWaitTV.setText(R.string.wait_for_geofence);
 			}else{
 				//如果是主动设置围栏的一方则跳转到地图页，设置电子围栏

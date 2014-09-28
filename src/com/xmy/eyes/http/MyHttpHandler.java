@@ -27,4 +27,11 @@ public class MyHttpHandler extends AsyncHttpResponseHandler {
 		super.onFailure(error, content);
 		ELog.d(url+":onFailure="+content);
 	}
+	
+	@Override
+	@Deprecated
+	public void onFailure(int statusCode, Throwable error, String content) {
+		super.onFailure(statusCode, error, content);
+		ELog.d(url+":statusCode="+statusCode+":onFailure="+content);
+	}
 }
